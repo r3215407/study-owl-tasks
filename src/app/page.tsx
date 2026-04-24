@@ -12,6 +12,7 @@ const DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frid
 export default function Home() {
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
   const [currentDayConfig, setCurrentDayConfig] = useState<DayConfig | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   // Load from localStorage whenever selectedDay changes
   useEffect(() => {
@@ -168,57 +169,56 @@ export default function Home() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="flex items-center gap-1 cursor-pointer">
+              <div
+                className="flex items-center gap-1 cursor-pointer"
+                onClick={() => setShowCalendar(!showCalendar)}
+              >
                 <h1 className="text-2xl font-black text-black">
                   {isToday ? 'Today' : DAYS_FULL[selectedDay]}
                 </h1>
-                <ChevronDown className="w-5 h-5 mt-1 text-black" />
+                <ChevronDown className={`w-5 h-5 mt-1 text-black transition-transform duration-300 ${showCalendar ? 'rotate-180' : ''}`} />
               </div>
             </div>
-            <div className="flex items-center gap-1 pr-2">
-              <Clock className="w-4 h-4 fill-black text-black" />
+            <div className="flex items-center gap-1 pr-2 ">
+              <Clock className="w-4 h-4" />
               <span className="font-bold text-lg">{totalCompletedDuration}</span>
             </div>
           </div>
 
           {/* Calendar Row */}
-          <div className="flex justify-between px-2">
-            {DAYS_SINGLE.map((day, idx) => {
-              const isSelected = selectedDay === idx;
-              const isTodayItem = new Date().getDay() === idx;
-              return (
-                <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
-                  <div className="h-1 flex items-center justify-center">
-                    {isSelected && <div className="w-1 h-1 bg-gray-500 rounded-full"></div>}
+          {showCalendar && (
+            <div className="flex justify-between px-2 py-4">
+              {DAYS_SINGLE.map((day, idx) => {
+                const isSelected = selectedDay === idx;
+                const isTodayItem = new Date().getDay() === idx;
+                return (
+                  <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
+                    <div className="h-1 flex items-center justify-center">
+                      {isSelected && <div className="w-1 h-1 bg-gray-500 rounded-full"></div>}
+                    </div>
+                    <span className={`text-[11px] font-bold ${isSelected ? 'text-black' : 'text-gray-400'}`}>
+                      {day}
+                    </span>
+                    <button
+                      onClick={() => setSelectedDay(idx)}
+                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isSelected
+                        ? 'bg-black text-white shadow-lg transform scale-110'
+                        : 'border border-gray-300 text-gray-400 hover:border-gray-500'
+                        }`}
+                    >
+                      {isSelected ? (
+                        <Check className="w-5 h-5 stroke-[3]" />
+                      ) : (
+                        isTodayItem && <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                      )}
+                    </button>
                   </div>
-                  <span className={`text-[11px] font-bold ${isSelected ? 'text-black' : 'text-gray-400'}`}>
-                    {day}
-                  </span>
-                  <button
-                    onClick={() => setSelectedDay(idx)}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isSelected
-                      ? 'bg-black text-white shadow-lg transform scale-110'
-                      : 'border border-gray-300 text-gray-400 hover:border-gray-500'
-                      }`}
-                  >
-                    {isSelected ? (
-                      <Check className="w-5 h-5 stroke-[3]" />
-                    ) : (
-                      isTodayItem && <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                    )}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-
-        {/* Task List Header */}
-        <div className="px-5 py-4 flex justify-between items-end">
-          <h3 className="text-2xl font-bold text-black">任务</h3>
-          <button className="text-sm font-medium text-black hover:opacity-70 transition-opacity">查看全部</button>
-        </div>
 
         {/* Task Cards with Gaps */}
         <div className="px-4 flex flex-col gap-3">
@@ -246,13 +246,15 @@ export default function Home() {
                     {task.title}
                   </h4>
                   <div className="flex flex-col mt-0.5">
-                    <p className={`text-sm font-medium ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {task.subtitle || (isLocked ? 'Locked' : '等待开始')}
-                    </p>
-                    {task.duration && (
-                      <span className="text-xs text-gray-400 font-medium">
-                        {task.duration}
-                      </span>
+                    {isCompleted ? (
+                      <div className="flex items-center gap-1 text-sm font-medium text-gray-500">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{task.duration}</span>
+                      </div>
+                    ) : (
+                      <p className={`text-sm font-medium ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {task.subtitle || (isLocked ? '未开始' : '等待开始')}
+                      </p>
                     )}
                   </div>
                 </div>
