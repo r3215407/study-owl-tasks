@@ -13,6 +13,13 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
   const [currentDayConfig, setCurrentDayConfig] = useState<DayConfig | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [now, setNow] = useState(Date.now());
+
+  // Update current time every 10 seconds to refresh timers
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Load from localStorage whenever selectedDay changes
   useEffect(() => {
@@ -250,6 +257,13 @@ export default function Home() {
                       <div className="flex items-center gap-1 text-sm font-medium text-gray-500">
                         <Clock className="w-3.5 h-3.5" />
                         <span>{task.duration}</span>
+                      </div>
+                    ) : isInProgress ? (
+                      <div className="flex items-center gap-1.5 text-sm font-medium text-[#0066EE]">
+                        <span>进行中</span>
+                        <Clock className="w-3.5 h-3.5 animate-spin-slow" />
+                        <span>{Math.max(0, Math.floor((now - (task.startTime || now)) / 60000))}</span>
+                        <span>分钟</span>
                       </div>
                     ) : (
                       <p className={`text-sm font-medium ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>
