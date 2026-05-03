@@ -1,7 +1,8 @@
 'use client';
 
-import { X, Flame, Clock, ChevronRight, CheckCircle2, Lock, Calendar, MoreHorizontal, Plus, Check, ChevronDown, Zap } from 'lucide-react';
+import { X, Flame, Clock, ChevronRight, CheckCircle2, Calendar, MoreHorizontal, Plus, Check, ChevronDown, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { WEEKLY_CONFIG, DayConfig } from '@/config/tasks';
 
 const MF_BLUE = '#0066EE';
@@ -10,6 +11,7 @@ const DAYS_SINGLE = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export default function Home() {
+  const router = useRouter();
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
   const [currentDayConfig, setCurrentDayConfig] = useState<DayConfig | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -70,6 +72,12 @@ export default function Home() {
     const isToday = selectedDay === new Date().getDay();
     if (!isToday) return;
 
+    // 复习错别字任务：跳转到专用页面
+    if (taskId === '2') {
+      router.push('/review-chars');
+      return;
+    }
+
     const taskIndex = currentDayConfig.tasks.findIndex(t => t.id === taskId);
     if (taskIndex === -1) return;
 
@@ -77,7 +85,7 @@ export default function Home() {
 
     let updatedTasks = currentDayConfig.tasks;
 
-    if (task.status === 'todo') {
+    if (task.status === 'todo' || task.status === 'locked') {
       // First click: Start timer
       updatedTasks = currentDayConfig.tasks.map((t, index) => {
         if (index === taskIndex) {
@@ -98,10 +106,6 @@ export default function Home() {
         if (index === taskIndex) {
           return { ...t, status: 'completed' as const, subtitle: '已完成', duration: durationStr };
         }
-        // If we just completed a task, unlock the next one
-        if (index === taskIndex + 1 && t.status === 'locked') {
-          return { ...t, status: 'todo' as const };
-        }
         return t;
       });
     } else if (task.status === 'completed') {
@@ -117,7 +121,6 @@ export default function Home() {
         return;
       }
     } else {
-      // Do nothing for 'locked' tasks on click
       return;
     }
 
@@ -233,23 +236,22 @@ export default function Home() {
             const Icon = task.icon;
             const isCompleted = task.status === 'completed';
             const isInProgress = task.status === 'in-progress';
-            const isLocked = task.status === 'locked';
 
             return (
               <div
                 key={task.id}
                 onClick={() => handleTaskClick(task.id)}
-                className={`flex items-center gap-4 p-5 rounded-[24px] bg-[#EBECEF] transition-all ${isLocked || !isToday ? 'opacity-60 cursor-default' : 'hover:bg-[#E5E7EB] cursor-pointer active:scale-[0.98]'
+                className={`flex items-center gap-4 p-5 rounded-[24px] bg-[#EBECEF] transition-all ${!isToday ? 'opacity-60 cursor-default' : 'hover:bg-[#E5E7EB] cursor-pointer active:scale-[0.98]'
                   }`}
               >
                 {/* Icon Container */}
                 <div className={`flex-shrink-0 w-12 h-12 flex items-center justify-center`}>
-                  <Icon className={`w-8 h-8 ${isLocked ? 'text-gray-400' : 'text-[#0066EE]'}`} />
+                  <Icon className={`w-8 h-8 text-[#0066EE]`} />
                 </div>
 
                 {/* Title & Subtitle */}
                 <div className="flex-1 min-w-0">
-                  <h4 className={`font-bold text-base leading-tight ${isLocked ? 'text-gray-500' : 'text-black'}`}>
+                  <h4 className={`font-bold text-base leading-tight text-black`}>
                     {task.title}
                   </h4>
                   <div className="flex flex-col mt-0.5">
@@ -266,8 +268,8 @@ export default function Home() {
                         <span>分钟</span>
                       </div>
                     ) : (
-                      <p className={`text-sm font-medium ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>
-                        {task.subtitle || (isLocked ? '未开始' : '等待开始')}
+                      <p className={`text-sm font-medium text-gray-500`}>
+                        {task.subtitle || '等待开始'}
                       </p>
                     )}
                   </div>
@@ -277,16 +279,13 @@ export default function Home() {
                 <div className="flex items-center gap-3">
                   <button
                     className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${isCompleted ? 'bg-[#D8E2ED] text-[#0066EE]' :
-                      isInProgress ? 'bg-[#0066EE] text-white animate-pulse' :
-                        isLocked ? 'bg-gray-200 text-gray-400' : 'bg-[#D8E2ED] text-[#0066EE]'
+                      isInProgress ? 'bg-[#0066EE] text-white animate-pulse' : 'bg-[#D8E2ED] text-[#0066EE]'
                       }`}
                   >
                     {isCompleted ? (
                       <Check className="w-5 h-5 stroke-[3]" />
                     ) : isInProgress ? (
                       <Check className="w-5 h-5 stroke-[3]" />
-                    ) : isLocked ? (
-                      <Lock className="w-5 h-5" />
                     ) : (
                       <Plus className="w-5 h-5 stroke-[3]" />
                     )}
