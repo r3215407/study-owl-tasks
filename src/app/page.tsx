@@ -12,7 +12,11 @@ const DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frid
 
 export default function Home() {
   const router = useRouter();
-  const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
+  const [selectedDateStr, setSelectedDateStr] = useState<string>(() => {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  });
+  const [currentMonth, setCurrentMonth] = useState<Date>(() => new Date());
   const [currentDayConfig, setCurrentDayConfig] = useState<DayConfig | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [now, setNow] = useState(Date.now());
@@ -23,12 +27,14 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // Load from localStorage whenever selectedDay changes
+  // Load from localStorage whenever selectedDateStr changes
   useEffect(() => {
-    const defaultConfig = WEEKLY_CONFIG.find(c => c.dayNumber === selectedDay) || WEEKLY_CONFIG[1];
+    const selectedDate = new Date(selectedDateStr);
+    const dayOfWeek = selectedDate.getDay();
+    const defaultConfig = WEEKLY_CONFIG.find(c => c.dayNumber === dayOfWeek) || WEEKLY_CONFIG[1];
 
     // Load from localStorage
-    const savedData = localStorage.getItem(`study-owl-tasks-${selectedDay}`);
+    const savedData = localStorage.getItem(`study-owl-tasks-${selectedDateStr}`);
     if (savedData) {
       try {
         const savedTasks = JSON.parse(savedData);
@@ -53,7 +59,7 @@ export default function Home() {
     } else {
       setCurrentDayConfig(defaultConfig);
     }
-  }, [selectedDay]);
+  }, [selectedDateStr]);
 
   // Save to localStorage whenever tasks change
   useEffect(() => {
@@ -61,15 +67,17 @@ export default function Home() {
       const serializableTasks = currentDayConfig.tasks.map(({ id, status, subtitle, startTime, duration }) => ({
         id, status, subtitle, startTime, duration
       }));
-      localStorage.setItem(`study-owl-tasks-${currentDayConfig.dayNumber}`, JSON.stringify(serializableTasks));
+      localStorage.setItem(`study-owl-tasks-${selectedDateStr}`, JSON.stringify(serializableTasks));
     }
-  }, [currentDayConfig]);
+  }, [currentDayConfig, selectedDateStr]);
 
   const handleTaskClick = (taskId: string) => {
     if (!currentDayConfig) return;
 
     // Only allow starting/completing tasks for the current day
-    const isToday = selectedDay === new Date().getDay();
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const isToday = selectedDateStr === todayStr;
     if (!isToday) return;
 
     // 复习错别字任务：跳转到专用页面
@@ -148,7 +156,12 @@ export default function Home() {
 
   if (!currentDayConfig) return null;
 
-  const isToday = selectedDay === new Date().getDay();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const isToday = selectedDateStr === todayStr;
+  
+  const selectedDateObj = new Date(selectedDateStr);
+  const selectedDayOfWeek = selectedDateObj.getDay();
   const completedTasks = currentDayConfig.tasks.filter(t => t.status === 'completed');
   const totalTasks = currentDayConfig.tasks.length;
   const progressPercent = (completedTasks.length / totalTasks) * 100;
@@ -179,12 +192,9 @@ export default function Home() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div
-                className="flex items-center gap-1 cursor-pointer"
-                onClick={() => setShowCalendar(!showCalendar)}
-              >
+              <div className="flex items-center gap-1 cursor-pointer" onClick={() => setShowCalendar(!showCalendar)}>
                 <h1 className="text-2xl font-black text-black">
-                  {isToday ? 'Today' : DAYS_FULL[selectedDay]}
+                  {isToday ? 'Today' : DAYS_FULL[selectedDayOfWeek]}
                 </h1>
                 <ChevronDown className={`w-5 h-5 mt-1 text-black transition-transform duration-300 ${showCalendar ? 'rotate-180' : ''}`} />
               </div>
@@ -196,37 +206,71 @@ export default function Home() {
           </div>
 
           {/* Calendar Row */}
-          {showCalendar && (
-            <div className="flex justify-between px-2 py-4">
-              {DAYS_SINGLE.map((day, idx) => {
-                const isSelected = selectedDay === idx;
-                const isTodayItem = new Date().getDay() === idx;
-                return (
-                  <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
-                    <div className="h-1 flex items-center justify-center">
-                      {isSelected && <div className="w-1 h-1 bg-gray-500 rounded-full"></div>}
-                    </div>
-                    <span className={`text-[11px] font-bold ${isSelected ? 'text-black' : 'text-gray-400'}`}>
+          {showCalendar && (() => {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const days = [];
+            for (let i = 0; i < firstDayOfMonth; i++) {
+              days.push(null);
+            }
+            for (let i = 1; i <= daysInMonth; i++) {
+              days.push(new Date(year, month, i));
+            }
+
+            return (
+              <div className="flex flex-col gap-2 px-2 py-4">
+                <div className="flex justify-between items-center px-4 mb-2">
+                  <button onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}>
+                    <ChevronRight className="w-5 h-5 rotate-180 text-gray-600" />
+                  </button>
+                  <span className="font-bold text-gray-800">{year}年{month + 1}月</span>
+                  <button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}>
+                    <ChevronRight className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-7 gap-y-3 gap-x-1">
+                  {DAYS_SINGLE.map((day, idx) => (
+                    <div key={`header-${idx}`} className="text-center text-[11px] font-bold text-gray-400 py-1">
                       {day}
-                    </span>
-                    <button
-                      onClick={() => setSelectedDay(idx)}
-                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isSelected
-                        ? 'bg-black text-white shadow-lg transform scale-110'
-                        : 'border border-gray-300 text-gray-400 hover:border-gray-500'
-                        }`}
-                    >
-                      {isSelected ? (
-                        <Check className="w-5 h-5 stroke-[3]" />
-                      ) : (
-                        isTodayItem && <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                      )}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                    </div>
+                  ))}
+                  {days.map((dateObj, idx) => {
+                    if (!dateObj) return <div key={`empty-${idx}`} />;
+                    
+                    const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+                    const isSelected = selectedDateStr === dateStr;
+                    const isTodayItem = dateStr === todayStr;
+                    
+                    return (
+                      <div key={dateStr} className="flex flex-col items-center gap-1.5 flex-1">
+                        <button
+                          onClick={() => {
+                            setSelectedDateStr(dateStr);
+                            if (dateObj.getMonth() !== currentMonth.getMonth()) {
+                               setCurrentMonth(new Date(dateObj.getFullYear(), dateObj.getMonth(), 1));
+                            }
+                          }}
+                          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isSelected
+                            ? 'bg-black text-white shadow-lg transform scale-110'
+                            : 'border border-transparent text-gray-600 hover:border-gray-300'
+                            }`}
+                        >
+                          <span className={`text-sm ${isSelected ? 'font-bold' : 'font-medium'}`}>{dateObj.getDate()}</span>
+                        </button>
+                        <div className="h-1 flex items-center justify-center">
+                          {isTodayItem && !isSelected && <div className="w-1 h-1 bg-gray-400 rounded-full"></div>}
+                          {isSelected && <div className="w-1 h-1 bg-gray-500 rounded-full"></div>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
 
@@ -269,7 +313,7 @@ export default function Home() {
                       </div>
                     ) : (
                       <p className={`text-sm font-medium text-gray-500`}>
-                        {task.subtitle || '等待开始'}
+                        {task.subtitle || (task.id === '2' ? '' : '等待开始')}
                       </p>
                     )}
                   </div>
@@ -282,7 +326,9 @@ export default function Home() {
                       isInProgress ? 'bg-[#0066EE] text-white animate-pulse' : 'bg-[#D8E2ED] text-[#0066EE]'
                       }`}
                   >
-                    {isCompleted ? (
+                    {task.id === '2' ? (
+                      <ChevronRight className="w-5 h-5 stroke-[3]" />
+                    ) : isCompleted ? (
                       <Check className="w-5 h-5 stroke-[3]" />
                     ) : isInProgress ? (
                       <Check className="w-5 h-5 stroke-[3]" />
