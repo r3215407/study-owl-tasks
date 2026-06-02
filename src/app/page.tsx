@@ -80,6 +80,12 @@ export default function Home() {
     const isToday = selectedDateStr === todayStr;
     if (!isToday) return;
 
+    // 复习昨日2道数学错题：跳转到专用页面
+    if (taskId === '1') {
+      router.push('/review-problems');
+      return;
+    }
+
     // 复习错别字任务：跳转到专用页面
     if (taskId === '2') {
       router.push('/review-chars');
@@ -313,7 +319,7 @@ export default function Home() {
                       </div>
                     ) : (
                       <p className={`text-sm font-medium text-gray-500`}>
-                        {task.subtitle || (task.id === '2' ? '' : '等待开始')}
+                        {task.subtitle || (task.id === '2' || task.id === '1' ? '' : '等待开始')}
                       </p>
                     )}
                   </div>
@@ -326,7 +332,7 @@ export default function Home() {
                       isInProgress ? 'bg-[#0066EE] text-white animate-pulse' : 'bg-[#D8E2ED] text-[#0066EE]'
                       }`}
                   >
-                    {task.id === '2' ? (
+                    {task.id === '2' || task.id === '1' ? (
                       <ChevronRight className="w-5 h-5 stroke-[3]" />
                     ) : isCompleted ? (
                       <Check className="w-5 h-5 stroke-[3]" />
