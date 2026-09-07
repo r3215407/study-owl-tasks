@@ -1,67 +1,149 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #071117;
+  --panel: #101d24;
+  --panel-2: #16262e;
+  --line: #2a3b42;
+  --paper: #f5f7f5;
+  --muted: #93a2a8;
+  --yellow: #f5d32f;
+  --aqua: #58d5d0;
+  --coral: #ff7a45;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("/assets/ZCOOLKuaiLe-Regular.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--ink);
+  --color-foreground: var(--paper);
+  --font-sans: var(--font-app);
   --animate-spin-slow: spin 3s linear infinite;
-  --animate-slide-up: slide-up 0.3s ease-out;
+  --animate-slide-up: slide-up 0.28s ease-out;
 }
+
+* { box-sizing: border-box; }
+html { background: var(--ink); }
+::selection { background: var(--yellow); color: var(--ink); }
+* { scrollbar-width: thin; scrollbar-color: var(--yellow) var(--panel); }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-app), "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+}
+button, input { font: inherit; }
+button { letter-spacing: 0; }
 
 @keyframes slide-up {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.ocean-app { min-height: 100svh; background-color: var(--ink); }
+
+.app-shell { width: min(100%, 720px); min-height: 100svh; margin: 0 auto; background: rgba(7, 17, 23, .94); }
+.command-header { padding: 24px 22px 0; }
+.brand-row { display: flex; align-items: center; gap: 12px; }
+.brand-row h1 { margin: 0; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 25px; line-height: 1; letter-spacing: 0; font-weight: 400; }
+.brand-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1; }
+.brand-mark { width: 42px; height: 42px; display: grid; place-items: center; background: var(--yellow); clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%); }
+.brand-mark svg { color: var(--ink); transform: rotate(-8deg); }
+.streak { margin-left: auto; display: flex; align-items: center; gap: 7px; color: var(--yellow); border-left: 1px solid var(--line); padding-left: 15px; }
+.streak span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.streak b { color: var(--paper); font-size: 19px; }
+
+.mission-brief { position: relative; min-height: 215px; margin-top: 28px; padding: 24px 22px; display: grid; grid-template-columns: 1.1fr .9fr; overflow: hidden; background: var(--panel); border-top: 3px solid var(--yellow); border-left: 1px solid var(--line); }
+.mission-brief::after { content: ""; position: absolute; right: -65px; bottom: -40px; width: 260px; height: 48px; background: var(--yellow); transform: rotate(-12deg); opacity: .94; }
+.brief-copy { position: relative; z-index: 2; }
+.brief-copy h2 { margin: 0 0 10px; font-family: "ZCOOL KuaiLe", sans-serif; font-size: clamp(30px, 8vw, 44px); line-height: 1; font-weight: 400; letter-spacing: 0; }
+.brief-copy p { max-width: 320px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.progress-track { width: min(100%, 270px); height: 8px; margin-top: 22px; background: #26343a; overflow: hidden; }
+.progress-track span { display: block; width: 100%; height: 100%; background: var(--yellow); transform-origin: left center; transition: transform .4s cubic-bezier(.16, 1, .3, 1); }
+.progress-meta { display: flex; align-items: baseline; gap: 10px; margin-top: 8px; }
+.progress-meta strong { font-size: 22px; color: var(--yellow); }
+.progress-meta span { color: var(--muted); font-size: 11px; }
+
+.shark-visual { position: relative; min-width: 220px; height: 172px; align-self: center; z-index: 1; overflow: hidden; background: #030810; border: 1px solid #40535b; box-shadow: 0 14px 32px rgba(0, 0, 0, .28); }
+.shark-visual img {
+  object-fit: contain;
+  object-position: center;
+}
+.shark-caption { position: absolute; right: 0; bottom: 0; padding: 7px 10px; background: var(--yellow); color: var(--ink); font-size: 12px; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+.mission-content { padding: 18px 22px 44px; }
+.date-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.date-trigger { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--paper); cursor: pointer; font-weight: 800; padding: 8px 0; }
+.date-trigger svg:first-child { color: var(--yellow); }
+.date-trigger .rotate { transform: rotate(180deg); }
+.date-trigger svg { transition: transform .2s; }
+.date-trigger:focus-visible, .calendar-head button:focus-visible, .calendar-grid button:focus-visible, .mission-task:focus-visible { outline: 3px solid var(--aqua); outline-offset: 3px; }
+.time-stat { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+
+.calendar-panel { margin: 8px 0 22px; padding: 17px; background: var(--panel); border: 1px solid var(--line); animation: slide-up .22s ease-out; }
+.calendar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+.calendar-head button { width: 36px; height: 36px; display: grid; place-items: center; background: transparent; color: var(--muted); border: 1px solid var(--line); cursor: pointer; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.weekday-row { margin-bottom: 6px; color: var(--muted); font-size: 10px; text-align: center; }
+.calendar-grid button { aspect-ratio: 1; border: 0; background: transparent; color: var(--paper); cursor: pointer; font-size: 13px; }
+.calendar-grid button:hover { background: var(--panel-2); }
+.calendar-grid button.today { outline: 1px solid var(--yellow); }
+.calendar-grid button.selected { background: var(--yellow); color: var(--ink); font-weight: 900; }
+
+.section-heading { display: flex; justify-content: space-between; align-items: flex-end; margin: 24px 0 12px; }
+.section-heading > div { display: flex; align-items: center; gap: 9px; }
+.section-heading h2 { margin: 0; font-size: 18px; font-weight: 900; }
+.section-heading > span { color: var(--muted); font-size: 12px; }
+.task-list { display: grid; gap: 8px; }
+.mission-task { width: 100%; min-height: 82px; display: grid; grid-template-columns: 31px 46px 1fr 42px; gap: 11px; align-items: center; padding: 12px 14px 12px 10px; border: 1px solid var(--line); background: var(--panel); color: var(--paper); cursor: pointer; text-align: left; transition: background .18s, transform .18s, border-color .18s; }
+.mission-task:hover:not(:disabled) { background: var(--panel-2); border-color: #52717d; }
+.mission-task:active:not(:disabled) { transform: translateY(2px); }
+.mission-task:disabled { cursor: default; opacity: .58; }
+.mission-task.active { border-color: var(--yellow); background: #19272b; }
+.mission-task.done { border-color: #397f7c; }
+.task-number { align-self: start; color: #5d6c72; font-size: 10px; font-weight: 800; }
+.task-icon { width: 44px; height: 44px; display: grid; place-items: center; color: var(--aqua); background: #1b3036; }
+.active .task-icon { color: var(--yellow); background: #39361f; }
+.done .task-icon { color: var(--ink); background: var(--aqua); }
+.task-copy { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.task-copy strong { font-size: 15px; line-height: 1.3; font-weight: 800; }
+.task-copy small { color: var(--muted); font-size: 11px; }
+.active .task-copy small { color: var(--yellow); }
+.task-action { width: 40px; height: 40px; display: grid; place-items: center; color: var(--ink); background: var(--yellow); }
+.task-action svg { width: 19px; }
+.done .task-action { background: var(--aqua); }
+.captain-note { display: flex; gap: 11px; align-items: flex-start; margin-top: 20px; padding: 15px 17px; border: 1px dashed #394b52; color: var(--muted); }
+.captain-note svg { flex: none; color: var(--coral); margin-top: 2px; }
+.captain-note p { margin: 0; font-size: 11px; line-height: 1.7; }
+.captain-note span { display: block; color: var(--paper); font-weight: 900; font-size: 12px; }
+
+.review-ocean { background: var(--ink); color: var(--paper); }
+.review-shell { width: min(100%, 720px); margin: 0 auto; }
+.review-ocean h1 { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 400; }
+.review-ocean button:focus-visible,
+.review-ocean input:focus-visible { outline: 3px solid var(--aqua); outline-offset: 3px; }
+.review-ocean input { caret-color: var(--yellow); }
+
+@media (max-width: 540px) {
+  .command-header { padding: 18px 14px 0; }
+  .mission-content { padding: 14px 14px 36px; }
+  .mission-brief { grid-template-columns: 1fr 125px; min-height: 198px; padding: 21px 16px; }
+  .shark-visual { min-width: 128px; height: 150px; }
+  .brief-copy h2 { font-size: 28px; }
+  .brief-copy p { max-width: 190px; }
+  .mission-task { grid-template-columns: 24px 42px 1fr 38px; gap: 8px; padding-right: 10px; }
+  .task-icon { width: 40px; height: 40px; }
+  .task-copy strong { font-size: 15px; }
+  .task-copy small { font-size: 12px; }
+  .task-action { width: 36px; height: 36px; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Duolingo 风格的厚度感按钮/卡片 */
-.duo-card {
-    border-bottom-width: 4px;
-    transition: all 0.1s;
-}
-
-.duo-card:active {
-    border-bottom-width: 0px;
-    transform: translateY(4px);
-}
-
-.duo-btn-blue {
-    background-color: #1cb0f6;
-    border-bottom: 5px solid #1899d6;
-}
-
-.duo-btn-blue:active {
-    border-bottom: 0px;
-    transform: translateY(5px);
-}
-
-/* 渐变进度条 */
-.progress-fill {
-    width: 66%;
-    /* 模拟进行到第二步 */
-    transition: width 0.5s ease-out;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

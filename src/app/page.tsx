@@ -1,362 +1,228 @@
 'use client';
 
-import { X, Flame, Clock, ChevronRight, CheckCircle2, Calendar, MoreHorizontal, Plus, Check, ChevronDown, Zap } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import {
+  CalendarDays,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  FishSymbol,
+  Play,
+  RotateCcw,
+  Timer,
+  Trophy,
+} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { WEEKLY_CONFIG, DayConfig } from '@/config/tasks';
+import Image from 'next/image';
+import { DayConfig, WEEKLY_CONFIG } from '@/config/tasks';
 
-const MF_BLUE = '#0066EE';
-const MF_BG = '#F2F2F7';
-const DAYS_SINGLE = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-const DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
+
+function toDateKey(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function parseDuration(value?: string) {
+  if (!value) return 0;
+  const minutes = Number(value.match(/(\d+)分/)?.[1] ?? 0);
+  const seconds = Number(value.match(/(\d+)秒/)?.[1] ?? 0);
+  return minutes * 60 + seconds;
+}
+
+function formatDuration(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}分${String(seconds).padStart(2, '0')}秒`;
+}
+
+function SharkBadge({ progress }: { progress: number }) {
+  return (
+    <div className="shark-visual" aria-label={`鲨鱼能量 ${progress}%`}>
+      <Image
+        src="/assets/shark-megalodon-stylized.png"
+        alt="橙色轮廓光下的卡通巨齿鲨"
+        fill
+        priority
+        sizes="(max-width: 540px) 44vw, 300px"
+      />
+      <span className="shark-caption">鲨鱼能量 {progress}%</span>
+    </div>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
-  const [selectedDateStr, setSelectedDateStr] = useState<string>(() => {
-    const today = new Date();
-    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  });
-  const [currentMonth, setCurrentMonth] = useState<Date>(() => new Date());
-  const [currentDayConfig, setCurrentDayConfig] = useState<DayConfig | null>(null);
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [now, setNow] = useState(Date.now());
+  const todayKey = toDateKey(new Date());
+  const [selectedDate, setSelectedDate] = useState(todayKey);
+  const [calendarMonth, setCalendarMonth] = useState(() => new Date());
+  const [dayConfig, setDayConfig] = useState<DayConfig | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [now, setNow] = useState<number | null>(null);
 
-  // Update current time every 10 seconds to refresh timers
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 10000);
-    return () => clearInterval(timer);
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
   }, []);
 
-  // Load from localStorage whenever selectedDateStr changes
   useEffect(() => {
-    const selectedDate = new Date(selectedDateStr);
-    const dayOfWeek = selectedDate.getDay();
-    const defaultConfig = WEEKLY_CONFIG.find(c => c.dayNumber === dayOfWeek) || WEEKLY_CONFIG[1];
-
-    // Load from localStorage
-    const savedData = localStorage.getItem(`study-owl-tasks-${selectedDateStr}`);
-    if (savedData) {
-      try {
-        const savedTasks = JSON.parse(savedData);
-        const mergedTasks = defaultConfig.tasks.map(defaultTask => {
-          const savedTask = savedTasks.find((t: any) => t.id === defaultTask.id);
-          if (savedTask) {
-            return {
-              ...defaultTask,
-              status: savedTask.status,
-              subtitle: savedTask.subtitle,
-              startTime: savedTask.startTime,
-              duration: savedTask.duration
-            };
-          }
-          return defaultTask;
-        });
-        setCurrentDayConfig({ ...defaultConfig, tasks: mergedTasks });
-      } catch (e) {
-        console.error('Failed to parse saved tasks', e);
-        setCurrentDayConfig(defaultConfig);
-      }
-    } else {
-      setCurrentDayConfig(defaultConfig);
+    const date = new Date(`${selectedDate}T12:00:00`);
+    const defaults = WEEKLY_CONFIG.find((item) => item.dayNumber === date.getDay()) ?? WEEKLY_CONFIG[1];
+    const stored = localStorage.getItem(`study-owl-tasks-${selectedDate}`);
+    let nextConfig = defaults;
+    if (!stored) {
+      const timer = window.setTimeout(() => setDayConfig(nextConfig), 0);
+      return () => window.clearTimeout(timer);
     }
-  }, [selectedDateStr]);
+    try {
+      const savedTasks = JSON.parse(stored) as DayConfig['tasks'];
+      nextConfig = {
+        ...defaults,
+        tasks: defaults.tasks.map((task) => ({ ...task, ...savedTasks.find((saved) => saved.id === task.id), icon: task.icon })),
+      };
+    } catch { /* Fall back to the weekday defaults. */ }
+    const timer = window.setTimeout(() => setDayConfig(nextConfig), 0);
+    return () => window.clearTimeout(timer);
+  }, [selectedDate]);
 
-  // Save to localStorage whenever tasks change
   useEffect(() => {
-    if (currentDayConfig) {
-      const serializableTasks = currentDayConfig.tasks.map(({ id, status, subtitle, startTime, duration }) => ({
-        id, status, subtitle, startTime, duration
-      }));
-      localStorage.setItem(`study-owl-tasks-${selectedDateStr}`, JSON.stringify(serializableTasks));
-    }
-  }, [currentDayConfig, selectedDateStr]);
+    if (!dayConfig) return;
+    const tasks = dayConfig.tasks.map(({ id, status, subtitle, startTime, duration }) => ({ id, status, subtitle, startTime, duration }));
+    localStorage.setItem(`study-owl-tasks-${selectedDate}`, JSON.stringify(tasks));
+  }, [dayConfig, selectedDate]);
 
-  const handleTaskClick = (taskId: string) => {
-    if (!currentDayConfig) return;
+  const completed = dayConfig?.tasks.filter((task) => task.status === 'completed').length ?? 0;
+  const total = dayConfig?.tasks.length ?? 0;
+  const progress = total ? Math.round((completed / total) * 100) : 0;
+  const isToday = selectedDate === todayKey;
+  const selectedDateObject = new Date(`${selectedDate}T12:00:00`);
+  const totalTime = dayConfig?.tasks.reduce((sum, task) => sum + parseDuration(task.duration), 0) ?? 0;
 
-    // Only allow starting/completing tasks for the current day
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const isToday = selectedDateStr === todayStr;
-    if (!isToday) return;
+  const calendarDays = useMemo(() => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const leading = new Date(year, month, 1).getDay();
+    const length = new Date(year, month + 1, 0).getDate();
+    return [...Array.from({ length: leading }, () => null), ...Array.from({ length }, (_, index) => new Date(year, month, index + 1))];
+  }, [calendarMonth]);
 
-    // 复习昨日2道数学错题：跳转到专用页面
-    if (taskId === '1') {
-      router.push('/review-problems');
-      return;
-    }
+  const handleTask = (taskId: string) => {
+    if (!dayConfig || !isToday) return;
+    if (taskId === '1') return router.push('/review-problems');
+    if (taskId === '2') return router.push('/review-chars');
+    const task = dayConfig.tasks.find((item) => item.id === taskId);
+    if (!task) return;
 
-    // 复习错别字任务：跳转到专用页面
-    if (taskId === '2') {
-      router.push('/review-chars');
-      return;
-    }
-
-    const taskIndex = currentDayConfig.tasks.findIndex(t => t.id === taskId);
-    if (taskIndex === -1) return;
-
-    const task = currentDayConfig.tasks[taskIndex];
-
-    let updatedTasks = currentDayConfig.tasks;
-
-    if (task.status === 'todo' || task.status === 'locked') {
-      // First click: Start timer
-      updatedTasks = currentDayConfig.tasks.map((t, index) => {
-        if (index === taskIndex) {
-          return { ...t, status: 'in-progress' as const, subtitle: '进行中', startTime: Date.now() };
-        }
-        return t;
+    if (task.status === 'completed') {
+      if (!window.confirm('要让这项任务重新出发吗？')) return;
+      setDayConfig({
+        ...dayConfig,
+        tasks: dayConfig.tasks.map((item) => item.id === taskId
+          ? { ...item, status: 'todo', subtitle: undefined, duration: undefined, startTime: undefined }
+          : item),
       });
-    } else if (task.status === 'in-progress') {
-      // Second click: Stop timer
-      const endTime = Date.now();
-      const startTime = task.startTime || endTime;
-      const durationMs = endTime - startTime;
-      const minutes = Math.floor(durationMs / 60000);
-      const seconds = Math.floor((durationMs % 60000) / 1000);
-      const durationStr = `${minutes}分${seconds}秒`;
-
-      updatedTasks = currentDayConfig.tasks.map((t, index) => {
-        if (index === taskIndex) {
-          return { ...t, status: 'completed' as const, subtitle: '已完成', duration: durationStr };
-        }
-        return t;
-      });
-    } else if (task.status === 'completed') {
-      // Prompt to reset if completed
-      if (confirm('该任务已完成，是否要重置并重新开始？')) {
-        updatedTasks = currentDayConfig.tasks.map((t, index) => {
-          if (index === taskIndex) {
-            return { ...t, status: 'todo' as const, subtitle: undefined, duration: undefined, startTime: undefined };
-          }
-          return t;
-        });
-      } else {
-        return;
-      }
-    } else {
       return;
     }
 
-    setCurrentDayConfig({
-      ...currentDayConfig,
-      tasks: updatedTasks
+    const completing = task.status === 'in-progress';
+    setDayConfig({
+      ...dayConfig,
+      tasks: dayConfig.tasks.map((item) => {
+        if (item.id !== taskId) return item;
+        if (!completing) return { ...item, status: 'in-progress', subtitle: '潜航中', startTime: Date.now() };
+        return {
+          ...item,
+          status: 'completed',
+          subtitle: '已完成',
+          duration: formatDuration(Math.max(1, Math.round((Date.now() - (item.startTime ?? Date.now())) / 1000))),
+        };
+      }),
     });
   };
 
-  // Helper function to parse duration string "X分Y秒" into total seconds
-  const parseDurationToSeconds = (durationStr: string): number => {
-    const minutesMatch = durationStr.match(/(\d+)分/);
-    const secondsMatch = durationStr.match(/(\d+)秒/);
-    const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
-    const seconds = secondsMatch ? parseInt(secondsMatch[1], 10) : 0;
-    return minutes * 60 + seconds;
-  };
-
-  // Helper function to format total seconds back to "X分Y秒"
-  const formatSecondsToDuration = (totalSeconds: number): string => {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}分${seconds}秒`;
-  };
-
-  if (!currentDayConfig) return null;
-
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const isToday = selectedDateStr === todayStr;
-  
-  const selectedDateObj = new Date(selectedDateStr);
-  const selectedDayOfWeek = selectedDateObj.getDay();
-  const completedTasks = currentDayConfig.tasks.filter(t => t.status === 'completed');
-  const totalTasks = currentDayConfig.tasks.length;
-  const progressPercent = (completedTasks.length / totalTasks) * 100;
-
-  const totalCompletedDurationSeconds = currentDayConfig.tasks.reduce((sum, task) => {
-    if (task.status === 'completed' && task.duration) {
-      return sum + parseDurationToSeconds(task.duration);
-    }
-    return sum;
-  }, 0);
-
-  const totalCompletedDuration = formatSecondsToDuration(totalCompletedDurationSeconds);
+  if (!dayConfig) return <main className="ocean-app" />;
 
   return (
-    <div className="bg-[#D8E5EE] min-h-screen font-sans text-[#333]">
-      <div className="max-w-md mx-auto bg-transparent min-h-screen flex flex-col pb-10">
-
-        {/* Redesigned Header based on Image */}
-        <div className="pt-2 pb-6 px-4 rounded-b-[32px] mb-2">
-
-          {/* User & Title Row */}
-          <div className="flex justify-between items-center px-2 mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-2 border-white/80 flex items-center justify-center bg-white/30 overflow-hidden">
-                <img
-                  src="https://cartea-hz.oss-cn-hangzhou.aliyuncs.com/test.png"
-                  alt="User avatar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex items-center gap-1 cursor-pointer" onClick={() => setShowCalendar(!showCalendar)}>
-                <h1 className="text-2xl font-black text-black">
-                  {isToday ? 'Today' : DAYS_FULL[selectedDayOfWeek]}
-                </h1>
-                <ChevronDown className={`w-5 h-5 mt-1 text-black transition-transform duration-300 ${showCalendar ? 'rotate-180' : ''}`} />
-              </div>
-            </div>
-            <div className="flex items-center gap-1 pr-2 ">
-              <Clock className="w-4 h-4" />
-              <span className="font-bold text-lg">{totalCompletedDuration}</span>
-            </div>
+    <main className="ocean-app">
+      <div className="app-shell">
+        <header className="command-header">
+          <div className="brand-row">
+            <div className="brand-mark" aria-hidden="true"><FishSymbol size={24} strokeWidth={2.6} /></div>
+            <div><h1>鲨鱼任务局</h1><p className="brand-subtitle">每日学习训练</p></div>
+            <div className="streak" title="今日完成任务"><Trophy size={18} /><span><b>{completed}</b> / {total}</span></div>
           </div>
 
-          {/* Calendar Row */}
-          {showCalendar && (() => {
-            const year = currentMonth.getFullYear();
-            const month = currentMonth.getMonth();
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+          <section className="mission-brief" aria-labelledby="mission-title">
+            <div className="brief-copy">
+              <h2 id="mission-title">向深海前进</h2>
+              <p>{completed === total ? '任务全部完成，今天的你是深海之王！' : `完成 ${total - completed} 项训练，给小鲨鱼补满能量。`}</p>
+              <div className="progress-track" aria-label={`今日进度 ${progress}%`}><span style={{ transform: `scaleX(${progress / 100})` }} /></div>
+              <div className="progress-meta"><strong>{progress}%</strong><span>{completed} / {total} 已完成</span></div>
+            </div>
+            <SharkBadge progress={progress} />
+          </section>
+        </header>
 
-            const days = [];
-            for (let i = 0; i < firstDayOfMonth; i++) {
-              days.push(null);
-            }
-            for (let i = 1; i <= daysInMonth; i++) {
-              days.push(new Date(year, month, i));
-            }
+        <section className="mission-content">
+          <div className="date-toolbar">
+            <button className="date-trigger" onClick={() => setCalendarOpen((value) => !value)} aria-expanded={calendarOpen}>
+              <CalendarDays size={18} />
+              <span>{isToday ? '今天' : `${selectedDateObject.getMonth() + 1}月${selectedDateObject.getDate()}日`} · 周{WEEKDAYS[selectedDateObject.getDay()]}</span>
+              <ChevronDown size={17} className={calendarOpen ? 'rotate' : ''} />
+            </button>
+            <div className="time-stat"><Clock3 size={17} /><span>训练 {formatDuration(totalTime)}</span></div>
+          </div>
 
-            return (
-              <div className="flex flex-col gap-2 px-2 py-4">
-                <div className="flex justify-between items-center px-4 mb-2">
-                  <button onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}>
-                    <ChevronRight className="w-5 h-5 rotate-180 text-gray-600" />
-                  </button>
-                  <span className="font-bold text-gray-800">{year}年{month + 1}月</span>
-                  <button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}>
-                    <ChevronRight className="w-5 h-5 text-gray-600" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-7 gap-y-3 gap-x-1">
-                  {DAYS_SINGLE.map((day, idx) => (
-                    <div key={`header-${idx}`} className="text-center text-[11px] font-bold text-gray-400 py-1">
-                      {day}
-                    </div>
-                  ))}
-                  {days.map((dateObj, idx) => {
-                    if (!dateObj) return <div key={`empty-${idx}`} />;
-                    
-                    const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
-                    const isSelected = selectedDateStr === dateStr;
-                    const isTodayItem = dateStr === todayStr;
-                    
-                    return (
-                      <div key={dateStr} className="flex flex-col items-center gap-1.5 flex-1">
-                        <button
-                          onClick={() => {
-                            setSelectedDateStr(dateStr);
-                            if (dateObj.getMonth() !== currentMonth.getMonth()) {
-                               setCurrentMonth(new Date(dateObj.getFullYear(), dateObj.getMonth(), 1));
-                            }
-                          }}
-                          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isSelected
-                            ? 'bg-black text-white shadow-lg transform scale-110'
-                            : 'border border-transparent text-gray-600 hover:border-gray-300'
-                            }`}
-                        >
-                          <span className={`text-sm ${isSelected ? 'font-bold' : 'font-medium'}`}>{dateObj.getDate()}</span>
-                        </button>
-                        <div className="h-1 flex items-center justify-center">
-                          {isTodayItem && !isSelected && <div className="w-1 h-1 bg-gray-400 rounded-full"></div>}
-                          {isSelected && <div className="w-1 h-1 bg-gray-500 rounded-full"></div>}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+          {calendarOpen && (
+            <div className="calendar-panel">
+              <div className="calendar-head">
+                <button aria-label="上个月" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}><ChevronLeft /></button>
+                <strong>{calendarMonth.getFullYear()} / {String(calendarMonth.getMonth() + 1).padStart(2, '0')}</strong>
+                <button aria-label="下个月" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}><ChevronRight /></button>
               </div>
-            );
-          })()}
-        </div>
-
-
-        {/* Task Cards with Gaps */}
-        <div className="px-4 flex flex-col gap-3">
-          {currentDayConfig.tasks.map((task) => {
-            const Icon = task.icon;
-            const isCompleted = task.status === 'completed';
-            const isInProgress = task.status === 'in-progress';
-
-            return (
-              <div
-                key={task.id}
-                onClick={() => handleTaskClick(task.id)}
-                className={`flex items-center gap-4 p-5 rounded-[24px] bg-[#EBECEF] transition-all ${!isToday ? 'opacity-60 cursor-default' : 'hover:bg-[#E5E7EB] cursor-pointer active:scale-[0.98]'
-                  }`}
-              >
-                {/* Icon Container */}
-                <div className={`flex-shrink-0 w-12 h-12 flex items-center justify-center`}>
-                  <Icon className={`w-8 h-8 text-[#0066EE]`} />
-                </div>
-
-                {/* Title & Subtitle */}
-                <div className="flex-1 min-w-0">
-                  <h4 className={`font-bold text-base leading-tight text-black`}>
-                    {task.title}
-                  </h4>
-                  <div className="flex flex-col mt-0.5">
-                    {isCompleted ? (
-                      <div className="flex items-center gap-1 text-sm font-medium text-gray-500">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>{task.duration}</span>
-                      </div>
-                    ) : isInProgress ? (
-                      <div className="flex items-center gap-1.5 text-sm font-medium text-[#0066EE]">
-                        <span>进行中</span>
-                        <Clock className="w-3.5 h-3.5 animate-spin-slow" />
-                        <span>{Math.max(0, Math.floor((now - (task.startTime || now)) / 60000))}</span>
-                        <span>分钟</span>
-                      </div>
-                    ) : (
-                      <p className={`text-sm font-medium text-gray-500`}>
-                        {task.subtitle || (task.id === '2' || task.id === '1' ? '' : '等待开始')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Right Actions */}
-                <div className="flex items-center gap-3">
+              <div className="calendar-grid weekday-row">{WEEKDAYS.map((day) => <span key={day}>{day}</span>)}</div>
+              <div className="calendar-grid">
+                {calendarDays.map((date, index) => date ? (
                   <button
-                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${isCompleted ? 'bg-[#D8E2ED] text-[#0066EE]' :
-                      isInProgress ? 'bg-[#0066EE] text-white animate-pulse' : 'bg-[#D8E2ED] text-[#0066EE]'
-                      }`}
-                  >
-                    {task.id === '2' || task.id === '1' ? (
-                      <ChevronRight className="w-5 h-5 stroke-[3]" />
-                    ) : isCompleted ? (
-                      <Check className="w-5 h-5 stroke-[3]" />
-                    ) : isInProgress ? (
-                      <Check className="w-5 h-5 stroke-[3]" />
-                    ) : (
-                      <Plus className="w-5 h-5 stroke-[3]" />
-                    )}
-                  </button>
-                </div>
+                    key={toDateKey(date)}
+                    className={`${toDateKey(date) === selectedDate ? 'selected' : ''} ${toDateKey(date) === todayKey ? 'today' : ''}`}
+                    onClick={() => { setSelectedDate(toDateKey(date)); setCalendarOpen(false); }}
+                  >{date.getDate()}</button>
+                ) : <span key={`empty-${index}`} />)}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          )}
 
-        {/* Bottom Tip */}
-        <div className="mt-auto p-8 text-center">
-          <div className="inline-flex items-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-widest">
-            <Flame className="w-4 h-4 text-orange-500" />
-            <span>{currentDayConfig.advice}</span>
+          <div className="section-heading">
+            <div><h2>训练清单</h2></div>
+            <span>{isToday ? '点击任务开始计时' : '历史记录只读'}</span>
           </div>
-        </div>
 
+          <div className="task-list">
+            {dayConfig.tasks.map((task, index) => {
+              const Icon = task.icon;
+              const reviewTask = task.id === '1' || task.id === '2';
+              const active = task.status === 'in-progress';
+              const done = task.status === 'completed';
+              const elapsed = active && now && task.startTime ? Math.max(0, Math.floor((now - task.startTime) / 1000)) : 0;
+              return (
+                <button key={task.id} className={`mission-task ${active ? 'active' : ''} ${done ? 'done' : ''}`} onClick={() => handleTask(task.id)} disabled={!isToday}>
+                  <span className="task-number">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="task-icon"><Icon size={23} /></span>
+                  <span className="task-copy">
+                    <strong>{task.title}</strong>
+                    <small>{done ? `用时 ${task.duration}` : active ? `潜航计时 ${formatDuration(elapsed)}` : reviewTask ? '进入专项复习舱' : '准备就绪'}</small>
+                  </span>
+                  <span className="task-action" aria-hidden="true">{done ? <Check /> : active ? <Timer /> : reviewTask ? <ChevronRight /> : <Play />}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <aside className="captain-note"><RotateCcw size={18} /><p><span>船长提示</span>{dayConfig.advice.replace(/[“”]/g, '')}</p></aside>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

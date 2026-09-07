@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-07T07:09:59.840Z",
+  "title": "Design System: 鲨鱼任务局",
+  "extensions": {
+    "colorMeta": {
+      "abyss": { "role": "neutral", "displayName": "深渊黑", "canonical": "#071117", "tonalRamp": ["oklch(15% 0.020 230)", "oklch(26% 0.020 230)", "oklch(37% 0.020 230)", "oklch(49% 0.020 230)", "oklch(61% 0.020 230)", "oklch(73% 0.020 230)", "oklch(84% 0.020 230)", "oklch(95% 0.020 230)"] },
+      "hull": { "role": "neutral", "displayName": "船舱板", "canonical": "#101d24", "tonalRamp": ["oklch(15% 0.022 230)", "oklch(26% 0.022 230)", "oklch(37% 0.022 230)", "oklch(49% 0.022 230)", "oklch(61% 0.022 230)", "oklch(73% 0.022 230)", "oklch(84% 0.022 230)", "oklch(95% 0.022 230)"] },
+      "hull-raised": { "role": "neutral", "displayName": "升起舱板", "canonical": "#16262e", "tonalRamp": ["oklch(15% 0.026 230)", "oklch(26% 0.026 230)", "oklch(37% 0.026 230)", "oklch(49% 0.026 230)", "oklch(61% 0.026 230)", "oklch(73% 0.026 230)", "oklch(84% 0.026 230)", "oklch(95% 0.026 230)"] },
+      "equipment": { "role": "neutral", "displayName": "设备蓝黑", "canonical": "#1b3036", "tonalRamp": ["oklch(15% 0.030 210)", "oklch(26% 0.030 210)", "oklch(37% 0.030 210)", "oklch(49% 0.030 210)", "oklch(61% 0.030 210)", "oklch(73% 0.030 210)", "oklch(84% 0.030 210)", "oklch(95% 0.030 210)"] },
+      "seam": { "role": "neutral", "displayName": "结构缝线", "canonical": "#2a3b42", "tonalRamp": ["oklch(15% 0.022 220)", "oklch(26% 0.022 220)", "oklch(37% 0.022 220)", "oklch(49% 0.022 220)", "oklch(61% 0.022 220)", "oklch(73% 0.022 220)", "oklch(84% 0.022 220)", "oklch(95% 0.022 220)"] },
+      "foam": { "role": "neutral", "displayName": "浪沫白", "canonical": "#f5f7f5", "tonalRamp": ["oklch(15% 0.005 150)", "oklch(26% 0.005 150)", "oklch(37% 0.005 150)", "oklch(49% 0.005 150)", "oklch(61% 0.005 150)", "oklch(73% 0.005 150)", "oklch(84% 0.005 150)", "oklch(95% 0.005 150)"] },
+      "sonar-muted": { "role": "neutral", "displayName": "声呐灰", "canonical": "#93a2a8", "tonalRamp": ["oklch(15% 0.015 220)", "oklch(26% 0.015 220)", "oklch(37% 0.015 220)", "oklch(49% 0.015 220)", "oklch(61% 0.015 220)", "oklch(73% 0.015 220)", "oklch(84% 0.015 220)", "oklch(95% 0.015 220)"] },
+      "review-muted": { "role": "neutral", "displayName": "复习灰", "canonical": "#a9bdc4", "tonalRamp": ["oklch(15% 0.020 220)", "oklch(26% 0.020 220)", "oklch(37% 0.020 220)", "oklch(49% 0.020 220)", "oklch(61% 0.020 220)", "oklch(73% 0.020 220)", "oklch(84% 0.020 220)", "oklch(95% 0.020 220)"] },
+      "review-subtle": { "role": "neutral", "displayName": "提示灰", "canonical": "#c5d2d6", "tonalRamp": ["oklch(15% 0.012 220)", "oklch(26% 0.012 220)", "oklch(37% 0.012 220)", "oklch(49% 0.012 220)", "oklch(61% 0.012 220)", "oklch(73% 0.012 220)", "oklch(84% 0.012 220)", "oklch(95% 0.012 220)"] },
+      "warning-yellow": { "role": "primary", "displayName": "警戒黄", "canonical": "#f5d32f", "tonalRamp": ["oklch(15% 0.125 95)", "oklch(26% 0.125 95)", "oklch(37% 0.125 95)", "oklch(49% 0.125 95)", "oklch(61% 0.125 95)", "oklch(73% 0.125 95)", "oklch(84% 0.125 95)", "oklch(95% 0.125 95)"] },
+      "warning-yellow-hover": { "role": "primary", "displayName": "警戒黄悬停", "canonical": "#d8ba22", "tonalRamp": ["oklch(15% 0.115 95)", "oklch(26% 0.115 95)", "oklch(37% 0.115 95)", "oklch(49% 0.115 95)", "oklch(61% 0.115 95)", "oklch(73% 0.115 95)", "oklch(84% 0.115 95)", "oklch(95% 0.115 95)"] },
+      "completion-aqua": { "role": "secondary", "displayName": "完成青", "canonical": "#58d5d0", "tonalRamp": ["oklch(15% 0.085 190)", "oklch(26% 0.085 190)", "oklch(37% 0.085 190)", "oklch(49% 0.085 190)", "oklch(61% 0.085 190)", "oklch(73% 0.085 190)", "oklch(84% 0.085 190)", "oklch(95% 0.085 190)"] },
+      "completion-deep": { "role": "tertiary", "displayName": "完成深绿", "canonical": "#12332f", "tonalRamp": ["oklch(15% 0.045 175)", "oklch(26% 0.045 175)", "oklch(37% 0.045 175)", "oklch(49% 0.045 175)", "oklch(61% 0.045 175)", "oklch(73% 0.045 175)", "oklch(84% 0.045 175)", "oklch(95% 0.045 175)"] },
+      "mastery-amber": { "role": "secondary", "displayName": "掌握琥珀", "canonical": "#f59e0b", "tonalRamp": ["oklch(15% 0.145 72)", "oklch(26% 0.145 72)", "oklch(37% 0.145 72)", "oklch(49% 0.145 72)", "oklch(61% 0.145 72)", "oklch(73% 0.145 72)", "oklch(84% 0.145 72)", "oklch(95% 0.145 72)"] },
+      "mastery-wash": { "role": "tertiary", "displayName": "掌握浅金", "canonical": "#fef3c7", "tonalRamp": ["oklch(15% 0.050 90)", "oklch(26% 0.050 90)", "oklch(37% 0.050 90)", "oklch(49% 0.050 90)", "oklch(61% 0.050 90)", "oklch(73% 0.050 90)", "oklch(84% 0.050 90)", "oklch(95% 0.050 90)"] },
+      "mastery-ink": { "role": "tertiary", "displayName": "掌握棕", "canonical": "#92400e", "tonalRamp": ["oklch(15% 0.105 50)", "oklch(26% 0.105 50)", "oklch(37% 0.105 50)", "oklch(49% 0.105 50)", "oklch(61% 0.105 50)", "oklch(73% 0.105 50)", "oklch(84% 0.105 50)", "oklch(95% 0.105 50)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "任务宣言", "purpose": "首页品牌身份与任务主标题。" },
+      "headline": { "displayName": "页面标题", "purpose": "复习页的一级标题。" },
+      "title": { "displayName": "分组标题", "purpose": "任务区、日历与关键分组标题。" },
+      "body": { "displayName": "操作正文", "purpose": "输入、主按钮与主要说明。" },
+      "label": { "displayName": "数据标签", "purpose": "统计、状态与日历元数据。" }
+    },
+    "shadows": [
+      { "name": "shark-ambient", "value": "0 14px 32px rgba(0, 0, 0, .28)", "purpose": "首页巨齿鲨插画的环境深度。" },
+      { "name": "action-mid", "value": "0 4px 6px -1px rgba(0,0,0,.10), 0 2px 4px -2px rgba(0,0,0,.10)", "purpose": "圆形确认动作与底部面板按钮。" },
+      { "name": "primary-action", "value": "0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -4px rgba(0,0,0,.10)", "purpose": "全宽录入按钮。" },
+      { "name": "media-viewer", "value": "0 25px 50px -12px rgba(0,0,0,.25)", "purpose": "全屏查看的错题图片。" }
+    ],
+    "motion": [
+      { "name": "state-fast", "value": "180ms ease", "purpose": "首页任务的背景、位移和边框状态。" },
+      { "name": "control-standard", "value": "200ms cubic-bezier(.4, 0, .2, 1)", "purpose": "图标旋转、颜色与复习控件状态。" },
+      { "name": "panel-enter", "value": "280ms ease-out", "purpose": "底部录入面板从下方进入。" },
+      { "name": "progress-spring", "value": "400ms cubic-bezier(.16, 1, .3, 1)", "purpose": "首页能量进度条增长。" }
+    ],
+    "breakpoints": [
+      { "name": "compact", "value": "540px" },
+      { "name": "dive-lane-max", "value": "720px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "录入与确认流程中的全宽主要动作。",
+      "html": "<button class=\"ds-btn-primary\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg><span>录入新的错别字</span></button>",
+      "css": ".ds-btn-primary { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border: 0; border-radius: 6px; background: var(--yellow, #f5d32f); color: var(--ink, #071117); font: 700 16px/1.5 Arial, sans-serif; transition: background-color 150ms, transform 150ms, box-shadow 150ms; box-shadow: 0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -4px rgba(0,0,0,.10); } .ds-btn-primary svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; } .ds-btn-primary:hover { background: #d8ba22; } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; }"
+    },
+    {
+      "name": "Navigation Icon Button",
+      "kind": "nav",
+      "refersTo": "button-icon",
+      "description": "返回和月份切换使用的圆形触控目标。",
+      "html": "<button class=\"ds-nav-icon\" aria-label=\"返回\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m15 18-6-6 6-6\"/></svg></button>",
+      "css": ".ds-nav-icon { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 9999px; background: var(--panel, #101d24); color: var(--paper, #f5f7f5); transition: background-color 150ms, transform 150ms; } .ds-nav-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } .ds-nav-icon:hover { background: var(--panel-2, #16262e); } .ds-nav-icon:active { transform: scale(.95); } .ds-nav-icon:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; }"
+    },
+    {
+      "name": "Mission Task",
+      "kind": "custom",
+      "refersTo": "task-card",
+      "description": "首页从待办到潜航再到完成的签名任务数据板。",
+      "html": "<button class=\"ds-mission-task\"><span class=\"ds-task-number\">03</span><span class=\"ds-task-icon\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M8 5v14l11-7z\"/></svg></span><span class=\"ds-task-copy\"><strong>完成学校作业</strong><small>准备出发</small></span><span class=\"ds-task-action\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M8 5v14l11-7z\"/></svg></span></button>",
+      "css": ".ds-mission-task { width: 100%; min-height: 82px; display: grid; grid-template-columns: 31px 46px 1fr 42px; gap: 11px; align-items: center; padding: 12px 14px 12px 10px; border: 1px solid var(--line, #2a3b42); border-radius: 0; background: var(--panel, #101d24); color: var(--paper, #f5f7f5); text-align: left; transition: background 180ms, transform 180ms, border-color 180ms; } .ds-mission-task:hover { background: var(--panel-2, #16262e); border-color: #52717d; } .ds-mission-task:active { transform: translateY(2px); } .ds-mission-task:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; } .ds-task-number { align-self: start; color: #5d6c72; font: 800 10px/1 Arial, sans-serif; } .ds-task-icon, .ds-task-action { display: grid; place-items: center; } .ds-task-icon { width: 44px; height: 44px; background: #1b3036; color: var(--aqua, #58d5d0); } .ds-task-action { width: 40px; height: 40px; background: var(--yellow, #f5d32f); color: var(--ink, #071117); } .ds-task-icon svg, .ds-task-action svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; } .ds-task-copy { min-width: 0; display: flex; flex-direction: column; gap: 6px; } .ds-task-copy strong { font: 800 15px/1.3 Arial, sans-serif; } .ds-task-copy small { color: var(--muted, #93a2a8); font: 400 11px/1.3 Arial, sans-serif; }"
+    },
+    {
+      "name": "Review Card",
+      "kind": "card",
+      "refersTo": "review-card",
+      "description": "错题与错别字复习列表中的紧凑状态卡。",
+      "html": "<div class=\"ds-review-card\"><span class=\"ds-review-icon\">课</span><span class=\"ds-review-copy\"><strong>课</strong><small>已复习 2/4</small><i><b></b><b></b><b></b><b></b></i></span><button aria-label=\"完成复习\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></button></div>",
+      "css": ".ds-review-card { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 6px; background: var(--panel, #101d24); color: var(--paper, #f5f7f5); transition: background-color 200ms, transform 200ms; } .ds-review-card:hover { background: var(--panel-2, #16262e); } .ds-review-icon { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 6px; background: #1b3036; color: var(--yellow, #f5d32f); font: 900 20px/1 Arial, sans-serif; } .ds-review-copy { min-width: 0; flex: 1; display: grid; gap: 4px; } .ds-review-copy strong { font: 700 14px/1.25 Arial, sans-serif; } .ds-review-copy small { color: #a9bdc4; font: 400 12px/1.25 Arial, sans-serif; } .ds-review-copy i { display: flex; gap: 2px; } .ds-review-copy i b { width: 12px; height: 6px; border-radius: 9999px; background: var(--yellow, #f5d32f); } .ds-review-copy i b:nth-last-child(-n+2) { background: #e5e7eb; } .ds-review-card button { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 9999px; background: var(--yellow, #f5d32f); color: var(--ink, #071117); transition: background-color 150ms, transform 150ms; } .ds-review-card button:hover { background: #d8ba22; } .ds-review-card button:active { transform: scale(.95); } .ds-review-card button:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; } .ds-review-card button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "底部录入面板中的日期和文本字段。",
+      "html": "<input class=\"ds-input\" type=\"text\" value=\"课，做，场\" aria-label=\"错别字\" />",
+      "css": ".ds-input { width: 100%; padding: 12px 16px; border: 2px solid transparent; border-radius: 6px; outline: none; background: var(--panel-2, #16262e); color: var(--paper, #f5f7f5); caret-color: var(--yellow, #f5d32f); font: 500 16px/1.5 Arial, sans-serif; transition: border-color 150ms; } .ds-input::placeholder { color: #c5d2d6; } .ds-input:hover { border-color: #2a3b42; } .ds-input:focus { border-color: var(--yellow, #f5d32f); } .ds-input:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; }"
+    },
+    {
+      "name": "Selected Calendar Day",
+      "kind": "button",
+      "refersTo": "calendar-day-selected",
+      "description": "复习日历中当前查看日期的高可见度状态。",
+      "html": "<button class=\"ds-calendar-day\" aria-pressed=\"true\"><span>7</span><i><b></b><b></b></i></button>",
+      "css": ".ds-calendar-day { position: relative; width: 44px; height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 0; border-radius: 9999px; background: var(--yellow, #f5d32f); color: var(--ink, #071117); font: 700 14px/1 Arial, sans-serif; transform: scale(1.1); transition: background-color 200ms, transform 200ms; box-shadow: 0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -4px rgba(0,0,0,.10); } .ds-calendar-day:hover { background: #d8ba22; } .ds-calendar-day:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; } .ds-calendar-day i { position: absolute; bottom: -2px; display: flex; gap: 2px; } .ds-calendar-day i b { width: 4px; height: 4px; border-radius: 9999px; background: rgba(27,48,54,.70); }"
+    },
+    {
+      "name": "Mastery Chip",
+      "kind": "chip",
+      "refersTo": "mastery-chip",
+      "description": "复习流程中标记最终掌握状态的内容胶囊。",
+      "html": "<span class=\"ds-mastery-chip\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z\"/></svg><strong>场</strong></span>",
+      "css": ".ds-mastery-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 9999px; background: #fef3c7; color: #92400e; font: 700 14px/1.25 Arial, sans-serif; } .ds-mastery-chip svg { width: 12px; height: 12px; fill: none; stroke: #f59e0b; stroke-width: 2; stroke-linejoin: round; } .ds-mastery-chip:hover { filter: brightness(.97); } .ds-mastery-chip:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; }"
+    },
+    {
+      "name": "Bottom Sheet",
+      "kind": "custom",
+      "refersTo": "bottom-sheet",
+      "description": "错题和错别字录入共用的移动端底部面板。",
+      "html": "<section class=\"ds-sheet\"><i aria-hidden=\"true\"></i><h3>录入错别字</h3><p>选择日期并输入错别字</p><input class=\"ds-sheet-input\" value=\"课，做，场\" aria-label=\"错别字\" /><div><button class=\"ds-sheet-cancel\">取消</button><button class=\"ds-sheet-confirm\">确认录入</button></div></section>",
+      "css": ".ds-sheet { width: 100%; max-width: 720px; padding: 24px 24px 32px; border-radius: 28px 28px 0 0; background: #1b3036; color: var(--paper, #f5f7f5); box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); animation: ds-sheet-in 280ms ease-out; } .ds-sheet > i { display: block; width: 40px; height: 4px; margin: 0 auto 20px; border-radius: 9999px; background: #d1d5dc; } .ds-sheet h3 { margin: 0 0 4px; font: 900 18px/1.55 Arial, sans-serif; } .ds-sheet p { margin: 0 0 16px; color: #a9bdc4; font: 400 14px/1.5 Arial, sans-serif; } .ds-sheet-input { width: 100%; padding: 12px 16px; border: 2px solid transparent; border-radius: 6px; outline: 0; background: var(--panel-2, #16262e); color: var(--paper, #f5f7f5); font: 500 16px/1.5 Arial, sans-serif; } .ds-sheet-input:focus { border-color: var(--yellow, #f5d32f); } .ds-sheet > div { display: flex; gap: 12px; margin-top: 16px; } .ds-sheet button { flex: 1; padding: 12px; border: 0; border-radius: 6px; font: 700 16px/1.5 Arial, sans-serif; transition: background-color 150ms, transform 150ms; } .ds-sheet button:active { transform: scale(.98); } .ds-sheet button:focus-visible, .ds-sheet-input:focus-visible { outline: 3px solid var(--aqua, #58d5d0); outline-offset: 3px; } .ds-sheet-cancel { background: var(--panel-2, #16262e); color: #a9bdc4; } .ds-sheet-confirm { background: var(--yellow, #f5d32f); color: var(--ink, #071117); } .ds-sheet-confirm:hover { background: #d8ba22; } @keyframes ds-sheet-in { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } } @media (prefers-reduced-motion: reduce) { .ds-sheet { animation-duration: .01ms; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "深海任务指挥舱",
+    "overview": "这是一个把放学后的学习流程变成深海任务的儿童操作界面。它用近黑海水、机械舱板和高可见度警戒色建立力量感，游戏风格巨齿鲨插画负责把主题固定在具体世界里；信息仍保持紧凑、直白，让四年级学生能快速判断下一步。\n\n系统有两种相容的材料语气：首页像赛事数据板，边缘硬、分区清晰、状态变化直接；错题与错别字页像随身复习工具，沿用同一色彩与字号，但用小圆角、圆形触控目标和底部面板降低录入负担。装饰服从进度、状态和操作，绝不盖过任务内容。",
+    "keyCharacteristics": [
+      "深海近黑背景上的分层蓝黑舱板",
+      "警戒黄表示行动与当前进度，青色或深绿表示完成",
+      "首页硬边数据板与复习页柔和控件并存",
+      "静态巨齿鲨插画、清晰线性图标和紧凑数值反馈",
+      "单列、移动优先、儿童可独立操作的触控密度"
+    ],
+    "rules": [
+      { "name": "The Yellow Means Go Rule", "body": "警戒黄只用于当前进度、选中状态和可执行的主要动作，不把大面积静态表面涂黄。", "section": "colors" },
+      { "name": "The State Changes Material Rule", "body": "待办保持蓝黑，进行中转为黄边与黄图标，完成转为青色或深绿；状态必须同时改变至少两个可见信号，不能只靠文字。", "section": "colors" },
+      { "name": "The One Playful Voice Rule", "body": "趣味展示字体只出现在一级身份与任务宣言，操作说明、数据和列表内容始终使用清晰无衬线体。", "section": "typography" },
+      { "name": "The Numbers Hold Still Rule", "body": "进度与统计数字使用等宽数字特性，动态变化时不造成布局跳动。", "section": "typography" },
+      { "name": "The 720px Dive Lane Rule", "body": "手机、平板和宽屏都维持一条最多 720px 的主操作通道；响应式变化压缩边距与媒体，不增加并排的第二工作列。", "section": "layout" },
+      { "name": "The Tonal-First Rule", "body": "静止容器默认靠深海表面色和细边界分层；只有动作、主题媒体或模态层获得阴影。", "section": "elevation" },
+      { "name": "The Square Mission, Soft Review Rule", "body": "任务指挥板保持直角，录入与复习工具允许小圆角；不要把首页批量胶囊化，也不要把所有复习容器改成硬边。", "section": "shapes" },
+      { "name": "The Static Shark Rule", "body": "鲨鱼观察窗不使用循环动效；动态反馈只服务明确的操作与状态变化。", "section": "motion" }
+    ],
+    "dos": [
+      "**Do** 用警戒黄指出唯一主要动作，用完成青或深绿表达完成。",
+      "**Do** 维持 44px 图标触控目标、清晰线性图标和文字标签之间的稳定关系。",
+      "**Do** 让状态同时体现在颜色、图标和文案，确保孩子无需猜测。",
+      "**Do** 在 540px 以下同步压缩边距、图片和任务网格，并保持 720px 单列上限。",
+      "**Do** 尊重系统减少动态效果设置，把动画与过渡缩短为近乎即时。"
+    ],
+    "donts": [
+      "**Don't** 把界面改回通用浅色待办列表或用大片浅色背景削弱深海世界。",
+      "**Don't** 把黄色同时用作装饰、信息和多个竞争操作；它的稀缺性提供方向。",
+      "**Don't** 给所有容器增加阴影或大圆角；深度优先来自色调和细边界。",
+      "**Don't** 用趣味展示字体承载长说明、表单值或密集数据。",
+      "**Don't** 在宽屏拆成多列仪表盘；这是连续的单人任务通道。"
+    ]
+  }
+}

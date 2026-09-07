@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { CSSProperties } from "react";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "猫头鹰作业打卡",
-  description: "作业打卡",
+  title: "鲨鱼任务局",
+  description: "给孩子的每日学习打卡与复习计划",
 };
 
 export default function RootLayout({
@@ -24,8 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="zh-CN"
+      className="h-full antialiased"
+      style={{ "--font-app": 'Arial, sans-serif' } as CSSProperties}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

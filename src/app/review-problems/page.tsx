@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Plus, Check, ChevronLeft, ChevronRight, History, X, Sparkles, Image as ImageIcon, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, Check, ChevronLeft, ChevronRight, History, X, Sparkles, Upload } from 'lucide-react';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -20,7 +20,6 @@ export default function ReviewProblemsPage() {
   const [problems, setProblems] = useState<ReviewProblem[]>([]);
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth()); // 0-indexed
-  const [selectedDate, setSelectedDate] = useState<string>(formatDate(new Date()));
   const [showAddModal, setShowAddModal] = useState(false);
   const [newProblemTitle, setNewProblemTitle] = useState('');
   const [newProblemImage, setNewProblemImage] = useState<string>('');
@@ -34,7 +33,8 @@ export default function ReviewProblemsPage() {
 
   // Load from localStorage
   useEffect(() => {
-    setProblems(loadReviewProblems());
+    const timer = window.setTimeout(() => setProblems(loadReviewProblems()), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Save to localStorage whenever problems change
@@ -178,50 +178,52 @@ export default function ReviewProblemsPage() {
   const masteredProblems = problems.filter(p => p.mastered).length;
 
   return (
-    <div className="bg-[#D8E5EE] min-h-screen font-sans text-[#333]">
-      <div className="max-w-md mx-auto bg-transparent min-h-screen flex flex-col pb-10">
+    <div className="review-ocean min-h-screen font-sans">
+      <div className="review-shell min-h-screen flex flex-col pb-10">
 
         {/* Header */}
         <div className="pt-4 pb-2 px-4">
           <div className="flex items-center gap-3 mb-1">
             <button
               onClick={() => router.back()}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-[#EBECEF] hover:bg-[#E0E1E4] transition-colors active:scale-95"
+              className="w-11 h-11 flex items-center justify-center rounded-full bg-[#101D24] hover:bg-[#16262E] transition-colors active:scale-95"
             >
-              <ArrowLeft className="w-5 h-5 text-black" />
+              <ArrowLeft className="w-5 h-5 text-[#F5F7F5]" />
             </button>
-            <h1 className="text-2xl font-black text-black">数学错题复习</h1>
+            <h1 className="text-2xl font-black text-[#F5F7F5]">数学错题复习</h1>
           </div>
           {/* Stats bar */}
           <div className="flex items-center gap-4 px-2 mt-2 mb-1">
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 font-medium">
-              <History className="w-4 h-4 text-[#0066EE]" />
-              <span>总计 <span className="text-black font-bold">{totalProblems}</span> 题</span>
+            <div className="flex items-center gap-1.5 text-sm text-[#A9BDC4] font-medium">
+              <History className="w-4 h-4 text-[#F5D32F]" />
+              <span>总计 <span className="text-[#F5F7F5] font-bold">{totalProblems}</span> 题</span>
             </div>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 font-medium">
+            <div className="flex items-center gap-1.5 text-sm text-[#A9BDC4] font-medium">
               <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-              <span>已掌握 <span className="text-black font-bold">{masteredProblems}</span> 题</span>
+              <span>已掌握 <span className="text-[#F5F7F5] font-bold">{masteredProblems}</span> 题</span>
             </div>
           </div>
         </div>
 
         {/* Month Calendar */}
         <div className="px-4 mb-3">
-          <div className="bg-[#EBECEF] rounded-[24px] overflow-hidden transition-all duration-300">
-            <div 
-              className={`flex items-center justify-between cursor-pointer px-5 py-4 hover:bg-[#E0E1E4] transition-colors ${isCalendarExpanded ? 'pb-2' : ''}`}
+          <div className="bg-[#101D24] rounded-lg overflow-hidden transition-all duration-300">
+            <button
+              type="button"
+              aria-expanded={isCalendarExpanded}
+              className={`flex w-full items-center justify-between px-5 py-4 text-left hover:bg-[#16262E] transition-colors ${isCalendarExpanded ? 'pb-2' : ''}`}
               onClick={() => setIsCalendarExpanded(!isCalendarExpanded)}
             >
-              <h3 className="text-base font-bold text-black">复习日历</h3>
+              <h3 className="text-base font-bold text-[#F5F7F5]">复习日历</h3>
               <div className="flex items-center gap-2">
                 {!isCalendarExpanded && (
-                  <span className="text-sm text-gray-500 font-medium">
+                  <span className="text-sm text-[#A9BDC4] font-medium">
                     {calendarYear}年{calendarMonth + 1}月
                   </span>
                 )}
-                <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isCalendarExpanded ? 'rotate-90' : ''}`} />
+                <ChevronRight className={`w-5 h-5 text-[#A9BDC4] transition-transform duration-200 ${isCalendarExpanded ? 'rotate-90' : ''}`} />
               </div>
-            </div>
+            </button>
 
             {isCalendarExpanded && (
               <div className="px-5 pb-5">
@@ -229,25 +231,25 @@ export default function ReviewProblemsPage() {
                 <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={prevMonth}
-                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#D8E2ED] transition-colors active:scale-95"
+                    className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#1B3036] transition-colors active:scale-95"
                   >
-                    <ChevronLeft className="w-5 h-5 text-gray-600" />
+                    <ChevronLeft className="w-5 h-5 text-[#C5D2D6]" />
                   </button>
-                  <h3 className="text-base font-bold text-black">
+                  <h3 className="text-base font-bold text-[#F5F7F5]">
                     {calendarYear}年{calendarMonth + 1}月
                   </h3>
                   <button
                     onClick={nextMonth}
-                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#D8E2ED] transition-colors active:scale-95"
+                    className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#1B3036] transition-colors active:scale-95"
                   >
-                    <ChevronRight className="w-5 h-5 text-gray-600" />
+                    <ChevronRight className="w-5 h-5 text-[#C5D2D6]" />
                   </button>
                 </div>
 
                 {/* Weekday Labels */}
                 <div className="grid grid-cols-7 mb-2">
                   {['一', '二', '三', '四', '五', '六', '日'].map(label => (
-                    <div key={label} className="text-center text-xs font-bold text-gray-400 py-1">
+                    <div key={label} className="text-center text-xs font-bold text-[#A9BDC4] py-1">
                       {label}
                     </div>
                   ))}
@@ -257,7 +259,7 @@ export default function ReviewProblemsPage() {
                 <div className="grid grid-cols-7 gap-y-1">
                   {calendarDays.map((day, idx) => {
                     if (day === null) {
-                      return <div key={`empty-${idx}`} className="h-10" />;
+                      return <div key={`empty-${idx}`} className="h-11" />;
                     }
 
                     const dateStr = getDateStr(day);
@@ -270,12 +272,12 @@ export default function ReviewProblemsPage() {
                       <button
                         key={`day-${day}`}
                         onClick={() => handleCalendarDayClick(day)}
-                        className={`h-10 flex flex-col items-center justify-center rounded-full relative transition-all duration-200
+                        className={`h-11 flex flex-col items-center justify-center rounded-full relative transition-all duration-200
                           ${isViewing
-                            ? 'bg-[#0066EE] text-white scale-110 shadow-lg'
+                            ? 'bg-[#F5D32F] text-[#071117] scale-110 shadow-lg'
                             : isToday
                               ? 'bg-black text-white font-bold'
-                              : 'text-gray-700 hover:bg-[#D8E2ED]'
+                              : 'text-[#C5D2D6] hover:bg-[#1B3036]'
                           }
                         `}
                       >
@@ -283,10 +285,10 @@ export default function ReviewProblemsPage() {
                         {/* Indicator dots */}
                         <div className="flex gap-0.5 mt-0.5 absolute -bottom-0.5">
                           {hasCreated && (
-                            <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-white/70' : 'bg-red-400'}`} />
+                            <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-[#1B3036]/70' : 'bg-red-400'}`} />
                           )}
                           {hasReviewed && (
-                            <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-white/70' : 'bg-green-400'}`} />
+                            <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-[#1B3036]/70' : 'bg-green-400'}`} />
                           )}
                         </div>
                       </button>
@@ -295,7 +297,7 @@ export default function ReviewProblemsPage() {
                 </div>
 
                 {/* Legend */}
-                <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-400">
+                <div className="flex items-center justify-center gap-4 mt-3 text-xs text-[#A9BDC4]">
                   <div className="flex items-center gap-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
                     <span>有录入</span>
@@ -313,24 +315,24 @@ export default function ReviewProblemsPage() {
         {/* Viewing specific date detail */}
         {viewingDate && viewingDate !== todayStr && (
           <div className="px-4 mb-3">
-            <div className="bg-[#EBECEF] rounded-[24px] p-5">
+            <div className="bg-[#101D24] rounded-lg p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-base font-bold text-black">
+                <h3 className="text-base font-bold text-[#F5F7F5]">
                   {viewingDate} 详情
                 </h3>
                 <button
                   onClick={() => setViewingDate(null)}
-                  className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-[#D8E2ED] transition-colors"
+                  className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#1B3036] transition-colors"
                 >
-                  <X className="w-4 h-4 text-gray-500" />
+                  <X className="w-4 h-4 text-[#A9BDC4]" />
                 </button>
               </div>
               {viewDateProblemsCreated.length > 0 && (
                 <div className="mb-3">
-                  <p className="text-xs font-bold text-gray-400 mb-1.5">当日录入</p>
+                  <p className="text-xs font-bold text-[#A9BDC4] mb-1.5">当日录入</p>
                   <div className="flex flex-col gap-2">
                     {viewDateProblemsCreated.map(p => (
-                      <div key={p.id} className="flex items-center gap-3 p-2.5 bg-[#D8E2ED] rounded-2xl">
+                      <div key={p.id} className="flex items-center gap-3 p-2.5 bg-[#1B3036] rounded-md">
                         {p.image && (
                           <img
                             src={p.image}
@@ -339,7 +341,7 @@ export default function ReviewProblemsPage() {
                             className="w-10 h-10 object-cover rounded-lg cursor-zoom-in"
                           />
                         )}
-                        <span className="text-sm font-medium text-black">{p.title}</span>
+                        <span className="text-sm font-medium text-[#F5F7F5]">{p.title}</span>
                       </div>
                     ))}
                   </div>
@@ -347,10 +349,10 @@ export default function ReviewProblemsPage() {
               )}
               {viewDateProblemsReviewed.length > 0 && (
                 <div>
-                  <p className="text-xs font-bold text-gray-400 mb-1.5">当日复习</p>
+                  <p className="text-xs font-bold text-[#A9BDC4] mb-1.5">当日复习</p>
                   <div className="flex flex-col gap-2">
                     {viewDateProblemsReviewed.map(p => (
-                      <div key={p.id} className="flex items-center justify-between p-2.5 bg-green-50 rounded-2xl">
+                      <div key={p.id} className="flex items-center justify-between p-2.5 bg-green-50 rounded-md">
                         <div className="flex items-center gap-3">
                           {p.image && (
                             <img
@@ -369,7 +371,7 @@ export default function ReviewProblemsPage() {
                 </div>
               )}
               {viewDateProblemsCreated.length === 0 && viewDateProblemsReviewed.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-2">当日无记录</p>
+                <p className="text-sm text-[#A9BDC4] text-center py-2">当日无记录</p>
               )}
             </div>
           </div>
@@ -378,10 +380,10 @@ export default function ReviewProblemsPage() {
         {/* Today's Review List */}
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between mb-2 px-1">
-            <h3 className="text-base font-bold text-black">
+            <h3 className="text-base font-bold text-[#F5F7F5]">
               今日待复习
             </h3>
-            <span className="text-sm font-medium text-gray-400">
+            <span className="text-sm font-medium text-[#A9BDC4]">
               {todayReviewProblems.length > 0
                 ? `${todayReviewProblems.filter(p => todayReviewedIds.has(p.id)).length}/${todayReviewProblems.length} 已完成`
                 : '暂无'
@@ -390,10 +392,10 @@ export default function ReviewProblemsPage() {
           </div>
 
           {todayReviewProblems.length === 0 ? (
-            <div className="bg-[#EBECEF] rounded-[24px] p-8 text-center">
-              <History className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-400 font-medium">今日没有需要复习的数学错题</p>
-              <p className="text-xs text-gray-300 mt-1">点击下方按钮录入新的数学错题</p>
+            <div className="bg-[#101D24] rounded-lg p-8 text-center">
+              <History className="w-10 h-10 text-[#C5D2D6] mx-auto mb-3" />
+              <p className="text-sm text-[#A9BDC4] font-medium">今日没有需要复习的数学错题</p>
+              <p className="text-xs text-[#C5D2D6] mt-1">点击下方按钮录入新的数学错题</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2.5">
@@ -405,16 +407,16 @@ export default function ReviewProblemsPage() {
                 return (
                   <div
                     key={problem.id}
-                    className={`flex items-center gap-4 p-4 rounded-[20px] transition-all duration-200
+                    className={`flex items-center gap-4 p-4 rounded-md transition-all duration-200
                       ${isReviewedToday
-                        ? 'bg-[#E8F5E9]'
-                        : 'bg-[#EBECEF] hover:bg-[#E5E7EB] cursor-pointer active:scale-[0.98]'
+                        ? 'bg-[#12332F]'
+                        : 'bg-[#101D24] hover:bg-[#16262E] cursor-pointer active:scale-[0.98]'
                       }
                     `}
                   >
                     {/* Thumbnail Image or Icon */}
                     {problem.image ? (
-                      <div className="w-14 h-14 relative flex-shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+                      <div className="w-14 h-14 relative flex-shrink-0 bg-[#1B3036] rounded-md shadow-sm overflow-hidden border border-gray-100">
                         <img
                           src={problem.image}
                           alt="problem thumbnail"
@@ -423,15 +425,15 @@ export default function ReviewProblemsPage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-white rounded-2xl shadow-sm">
-                        <History className="w-6 h-6 text-[#0066EE]" />
+                      <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-[#1B3036] rounded-md shadow-sm">
+                        <History className="w-6 h-6 text-[#F5D32F]" />
                       </div>
                     )}
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-black truncate block">
+                        <span className="text-sm font-bold text-[#F5F7F5] truncate block">
                           {problem.title}
                         </span>
                         {problem.mastered && (
@@ -441,14 +443,14 @@ export default function ReviewProblemsPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-400 flex-shrink-0">已复习 {progress}/{total}</span>
+                        <span className="text-xs text-[#A9BDC4] flex-shrink-0">已复习 {progress}/{total}</span>
                         {/* Mini progress bar */}
                         <div className="flex gap-0.5">
                           {Array.from({ length: total }).map((_, i) => (
                             <div
                               key={i}
                               className={`w-3 h-1.5 rounded-full transition-colors ${
-                                i < progress ? 'bg-[#0066EE]' : 'bg-gray-200'
+                                i < progress ? 'bg-[#F5D32F]' : 'bg-gray-200'
                               }`}
                             />
                           ))}
@@ -461,18 +463,18 @@ export default function ReviewProblemsPage() {
                       {!isReviewedToday ? (
                         <button
                           onClick={(e) => { e.stopPropagation(); handleReview(problem.id); }}
-                          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0066EE] text-white hover:bg-[#0055CC] transition-colors active:scale-95 shadow-md"
+                          className="w-11 h-11 flex items-center justify-center rounded-full bg-[#F5D32F] text-[#071117] hover:bg-[#D8BA22] transition-colors active:scale-95 shadow-md"
                         >
                           <Check className="w-5 h-5 stroke-[3]" />
                         </button>
                       ) : (
-                        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-green-500 text-white">
+                        <div className="w-11 h-11 flex items-center justify-center rounded-full bg-green-500 text-white">
                           <Check className="w-5 h-5 stroke-[3]" />
                         </div>
                       )}
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDeleteProblem(problem.id); }}
-                        className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"
+                        className="w-11 h-11 flex items-center justify-center rounded-full text-[#A9BDC4] hover:text-red-700 hover:bg-red-50 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -492,12 +494,12 @@ export default function ReviewProblemsPage() {
           return (
             <div className="px-4 mb-3">
               <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="text-base font-bold text-black">待复习（未到期）</h3>
-                <span className="text-sm font-medium text-gray-400">{otherProblems.length} 题</span>
+                <h3 className="text-base font-bold text-[#F5F7F5]">待复习（未到期）</h3>
+                <span className="text-sm font-medium text-[#A9BDC4]">{otherProblems.length} 题</span>
               </div>
-              <div className="bg-[#EBECEF] rounded-[24px] p-4 flex flex-col gap-2">
+              <div className="bg-[#101D24] rounded-lg p-4 flex flex-col gap-2">
                 {otherProblems.map(p => (
-                  <div key={p.id} className="flex items-center gap-3 p-2 bg-white rounded-2xl">
+                  <div key={p.id} className="flex items-center gap-3 p-2 bg-[#1B3036] rounded-md">
                     {p.image && (
                       <img
                         src={p.image}
@@ -506,8 +508,8 @@ export default function ReviewProblemsPage() {
                         className="w-9 h-9 object-cover rounded-lg cursor-zoom-in"
                       />
                     )}
-                    <span className="text-sm font-bold text-black truncate flex-1">{p.title}</span>
-                    <span className="text-xs text-gray-400 flex-shrink-0 pr-1">{p.reviewCount}/{REVIEW_INTERVALS.length}</span>
+                    <span className="text-sm font-bold text-[#F5F7F5] truncate flex-1">{p.title}</span>
+                    <span className="text-xs text-[#A9BDC4] flex-shrink-0 pr-1">{p.reviewCount}/{REVIEW_INTERVALS.length}</span>
                   </div>
                 ))}
               </div>
@@ -519,12 +521,12 @@ export default function ReviewProblemsPage() {
         {masteredProblems > 0 && (
           <div className="px-4 mb-3">
             <div className="flex items-center justify-between mb-2 px-1">
-              <h3 className="text-base font-bold text-black">已掌握 🎉</h3>
-              <span className="text-sm font-medium text-gray-400">{masteredProblems} 题</span>
+              <h3 className="text-base font-bold text-[#F5F7F5]">已掌握 🎉</h3>
+              <span className="text-sm font-medium text-[#A9BDC4]">{masteredProblems} 题</span>
             </div>
-            <div className="bg-[#EBECEF] rounded-[24px] p-4 flex flex-col gap-2">
+            <div className="bg-[#101D24] rounded-lg p-4 flex flex-col gap-2">
               {problems.filter(p => p.mastered).map(p => (
-                <div key={p.id} className="flex items-center gap-3 p-2 bg-[#FEF3C7] rounded-2xl">
+                <div key={p.id} className="flex items-center gap-3 p-2 bg-[#FEF3C7] rounded-md">
                   {p.image && (
                     <img
                       src={p.image}
@@ -545,7 +547,7 @@ export default function ReviewProblemsPage() {
         <div className="px-4 mt-2">
           <button
             onClick={openAddModal}
-            className="w-full flex items-center justify-center gap-2 p-4 rounded-[20px] bg-[#0066EE] text-white font-bold text-base hover:bg-[#0055CC] transition-all active:scale-[0.98] shadow-lg"
+            className="w-full flex items-center justify-center gap-2 p-4 rounded-md bg-[#F5D32F] text-[#071117] font-bold text-base hover:bg-[#D8BA22] transition-all active:scale-[0.98] shadow-lg"
           >
             <Plus className="w-5 h-5 stroke-[3]" />
             <span>录入新的数学错题</span>
@@ -565,10 +567,10 @@ export default function ReviewProblemsPage() {
             onClick={() => setShowAddModal(false)}
           />
           {/* Modal Content */}
-          <div className="relative w-full max-w-md bg-white rounded-t-[28px] p-6 pb-8 animate-slide-up">
+          <div className="relative w-full max-w-[720px] bg-[#1B3036] rounded-t-[28px] p-6 pb-8 animate-slide-up">
             <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5" />
-            <h3 className="text-lg font-black text-black mb-1">录入数学错题</h3>
-            <p className="text-sm text-gray-400 mb-4">
+            <h3 className="text-lg font-black text-[#F5F7F5] mb-1">录入数学错题</h3>
+            <p className="text-sm text-[#A9BDC4] mb-4">
               选择日期并填写题目描述，上传一张错题照片(支持本地存储)
             </p>
             <div className="flex flex-col gap-3">
@@ -576,7 +578,7 @@ export default function ReviewProblemsPage() {
                 type="date"
                 value={newProblemDate}
                 onChange={e => setNewProblemDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#F2F2F7] border-2 border-transparent focus:border-[#0066EE] outline-none text-base font-medium text-black transition-colors"
+                className="w-full px-4 py-3 rounded-md bg-[#16262E] border-2 border-transparent focus:border-[#F5D32F] outline-none text-base font-medium text-[#F5F7F5] transition-colors"
               />
               
               <input
@@ -586,13 +588,13 @@ export default function ReviewProblemsPage() {
                 onKeyDown={e => { if (e.key === 'Enter') handleAddProblem(); }}
                 placeholder="错题描述（如：多边形内角和算错）"
                 autoFocus
-                className="w-full px-4 py-3 rounded-2xl bg-[#F2F2F7] border-2 border-transparent focus:border-[#0066EE] outline-none text-base font-medium text-black placeholder:text-gray-300 transition-colors"
+                className="w-full px-4 py-3 rounded-md bg-[#16262E] border-2 border-transparent focus:border-[#F5D32F] outline-none text-base font-medium text-[#F5F7F5] placeholder:text-[#C5D2D6] transition-colors"
               />
 
               {/* Local Image Upload Area */}
               <div 
                 onClick={triggerFileSelect}
-                className="w-full border-2 border-dashed border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center bg-[#F8F9FA] hover:bg-[#F2F3F5] cursor-pointer transition-colors"
+                className="w-full border-2 border-dashed border-gray-200 rounded-md p-4 flex flex-col items-center justify-center bg-[#F8F9FA] hover:bg-[#F2F3F5] cursor-pointer transition-colors"
               >
                 <input 
                   type="file"
@@ -617,8 +619,8 @@ export default function ReviewProblemsPage() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-2 text-gray-400 py-2">
-                    <Upload className="w-8 h-8 text-gray-300" />
+                  <div className="flex flex-col items-center gap-2 text-[#A9BDC4] py-2">
+                    <Upload className="w-8 h-8 text-[#C5D2D6]" />
                     <span className="text-sm font-bold">点击上传错题照片</span>
                     <span className="text-xs">支持任意图片格式，存储于本地</span>
                   </div>
@@ -629,13 +631,13 @@ export default function ReviewProblemsPage() {
             <div className="flex gap-3 mt-5">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="flex-1 py-3.5 rounded-2xl bg-[#F2F2F7] text-gray-500 font-bold text-base hover:bg-[#E5E7EB] transition-colors active:scale-[0.98]"
+                className="flex-1 py-3.5 rounded-md bg-[#16262E] text-[#A9BDC4] font-bold text-base hover:bg-[#16262E] transition-colors active:scale-[0.98]"
               >
                 取消
               </button>
               <button
                 onClick={handleAddProblem}
-                className="flex-1 py-3.5 rounded-2xl bg-[#0066EE] text-white font-bold text-base hover:bg-[#0055CC] transition-colors active:scale-[0.98] shadow-md"
+                className="flex-1 py-3.5 rounded-md bg-[#F5D32F] text-[#071117] font-bold text-base hover:bg-[#D8BA22] transition-colors active:scale-[0.98] shadow-md"
               >
                 确认录入
               </button>
@@ -651,7 +653,7 @@ export default function ReviewProblemsPage() {
           onClick={() => setZoomImageUrl(null)}
         >
           <button 
-            className="absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full bg-[#1B3036]/10 hover:bg-[#1B3036]/20 text-white transition-colors"
             onClick={() => setZoomImageUrl(null)}
           >
             <X className="w-6 h-6" />
@@ -670,3 +672,5 @@ export default function ReviewProblemsPage() {
     </div>
   );
 }
+
+

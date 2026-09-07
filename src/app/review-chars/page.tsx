@@ -20,7 +20,6 @@ export default function ReviewCharsPage() {
   const [chars, setChars] = useState<MisspelledChar[]>([]);
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth()); // 0-indexed
-  const [selectedDate, setSelectedDate] = useState<string>(formatDate(new Date()));
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCharInput, setNewCharInput] = useState('');
   const [newCharDate, setNewCharDate] = useState<string>(formatDate(new Date()));
@@ -31,7 +30,8 @@ export default function ReviewCharsPage() {
 
   // Load from localStorage
   useEffect(() => {
-    setChars(loadMisspelledChars());
+    const timer = window.setTimeout(() => setChars(loadMisspelledChars()), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Save to localStorage whenever chars change
@@ -159,50 +159,52 @@ export default function ReviewCharsPage() {
   const masteredChars = chars.filter(c => c.mastered).length;
 
   return (
-    <div className="bg-[#D8E5EE] min-h-screen font-sans text-[#333]">
-      <div className="max-w-md mx-auto bg-transparent min-h-screen flex flex-col pb-10">
+    <div className="review-ocean min-h-screen font-sans">
+      <div className="review-shell min-h-screen flex flex-col pb-10">
 
         {/* Header */}
         <div className="pt-4 pb-2 px-4">
           <div className="flex items-center gap-3 mb-1">
             <button
               onClick={() => router.back()}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-[#EBECEF] hover:bg-[#E0E1E4] transition-colors active:scale-95"
+              className="w-11 h-11 flex items-center justify-center rounded-full bg-[#101D24] hover:bg-[#16262E] transition-colors active:scale-95"
             >
-              <ArrowLeft className="w-5 h-5 text-black" />
+              <ArrowLeft className="w-5 h-5 text-[#F5F7F5]" />
             </button>
-            <h1 className="text-2xl font-black text-black">错别字复习</h1>
+            <h1 className="text-2xl font-black text-[#F5F7F5]">错别字复习</h1>
           </div>
           {/* Stats bar */}
           <div className="flex items-center gap-4 px-2 mt-2 mb-1">
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 font-medium">
-              <PencilLine className="w-4 h-4 text-[#0066EE]" />
-              <span>总计 <span className="text-black font-bold">{totalChars}</span> 字</span>
+            <div className="flex items-center gap-1.5 text-sm text-[#A9BDC4] font-medium">
+              <PencilLine className="w-4 h-4 text-[#F5D32F]" />
+              <span>总计 <span className="text-[#F5F7F5] font-bold">{totalChars}</span> 字</span>
             </div>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 font-medium">
+            <div className="flex items-center gap-1.5 text-sm text-[#A9BDC4] font-medium">
               <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-              <span>已掌握 <span className="text-black font-bold">{masteredChars}</span> 字</span>
+              <span>已掌握 <span className="text-[#F5F7F5] font-bold">{masteredChars}</span> 字</span>
             </div>
           </div>
         </div>
 
         {/* Month Calendar */}
         <div className="px-4 mb-3">
-          <div className="bg-[#EBECEF] rounded-[24px] overflow-hidden transition-all duration-300">
-            <div 
-              className={`flex items-center justify-between cursor-pointer px-5 py-4 hover:bg-[#E0E1E4] transition-colors ${isCalendarExpanded ? 'pb-2' : ''}`}
+          <div className="bg-[#101D24] rounded-lg overflow-hidden transition-all duration-300">
+            <button
+              type="button"
+              aria-expanded={isCalendarExpanded}
+              className={`flex w-full items-center justify-between px-5 py-4 text-left hover:bg-[#16262E] transition-colors ${isCalendarExpanded ? 'pb-2' : ''}`}
               onClick={() => setIsCalendarExpanded(!isCalendarExpanded)}
             >
-              <h3 className="text-base font-bold text-black">复习日历</h3>
+              <h3 className="text-base font-bold text-[#F5F7F5]">复习日历</h3>
               <div className="flex items-center gap-2">
                 {!isCalendarExpanded && (
-                  <span className="text-sm text-gray-500 font-medium">
+                  <span className="text-sm text-[#A9BDC4] font-medium">
                     {calendarYear}年{calendarMonth + 1}月
                   </span>
                 )}
-                <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isCalendarExpanded ? 'rotate-90' : ''}`} />
+                <ChevronRight className={`w-5 h-5 text-[#A9BDC4] transition-transform duration-200 ${isCalendarExpanded ? 'rotate-90' : ''}`} />
               </div>
-            </div>
+            </button>
 
             {isCalendarExpanded && (
               <div className="px-5 pb-5">
@@ -210,25 +212,25 @@ export default function ReviewCharsPage() {
                 <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={prevMonth}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#D8E2ED] transition-colors active:scale-95"
+                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#1B3036] transition-colors active:scale-95"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+                <ChevronLeft className="w-5 h-5 text-[#C5D2D6]" />
               </button>
-              <h3 className="text-base font-bold text-black">
+              <h3 className="text-base font-bold text-[#F5F7F5]">
                 {calendarYear}年{calendarMonth + 1}月
               </h3>
               <button
                 onClick={nextMonth}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#D8E2ED] transition-colors active:scale-95"
+                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#1B3036] transition-colors active:scale-95"
               >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
+                <ChevronRight className="w-5 h-5 text-[#C5D2D6]" />
               </button>
             </div>
 
             {/* Weekday Labels */}
             <div className="grid grid-cols-7 mb-2">
               {['一', '二', '三', '四', '五', '六', '日'].map(label => (
-                <div key={label} className="text-center text-xs font-bold text-gray-400 py-1">
+                <div key={label} className="text-center text-xs font-bold text-[#A9BDC4] py-1">
                   {label}
                 </div>
               ))}
@@ -238,7 +240,7 @@ export default function ReviewCharsPage() {
             <div className="grid grid-cols-7 gap-y-1">
               {calendarDays.map((day, idx) => {
                 if (day === null) {
-                  return <div key={`empty-${idx}`} className="h-10" />;
+                  return <div key={`empty-${idx}`} className="h-11" />;
                 }
 
                 const dateStr = getDateStr(day);
@@ -251,12 +253,12 @@ export default function ReviewCharsPage() {
                   <button
                     key={`day-${day}`}
                     onClick={() => handleCalendarDayClick(day)}
-                    className={`h-10 flex flex-col items-center justify-center rounded-full relative transition-all duration-200
+                    className={`h-11 flex flex-col items-center justify-center rounded-full relative transition-all duration-200
                       ${isViewing
-                        ? 'bg-[#0066EE] text-white scale-110 shadow-lg'
+                        ? 'bg-[#F5D32F] text-[#071117] scale-110 shadow-lg'
                         : isToday
                           ? 'bg-black text-white font-bold'
-                          : 'text-gray-700 hover:bg-[#D8E2ED]'
+                          : 'text-[#C5D2D6] hover:bg-[#1B3036]'
                       }
                     `}
                   >
@@ -264,10 +266,10 @@ export default function ReviewCharsPage() {
                     {/* Indicator dots */}
                     <div className="flex gap-0.5 mt-0.5 absolute -bottom-0.5">
                       {hasCreated && (
-                        <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-white/70' : 'bg-red-400'}`} />
+                        <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-[#1B3036]/70' : 'bg-red-400'}`} />
                       )}
                       {hasReviewed && (
-                        <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-white/70' : 'bg-green-400'}`} />
+                        <div className={`w-1 h-1 rounded-full ${isViewing || isToday ? 'bg-[#1B3036]/70' : 'bg-green-400'}`} />
                       )}
                     </div>
                   </button>
@@ -276,7 +278,7 @@ export default function ReviewCharsPage() {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-400">
+            <div className="flex items-center justify-center gap-4 mt-3 text-xs text-[#A9BDC4]">
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
                 <span>有录入</span>
@@ -294,24 +296,24 @@ export default function ReviewCharsPage() {
         {/* Viewing specific date detail */}
         {viewingDate && viewingDate !== todayStr && (
           <div className="px-4 mb-3">
-            <div className="bg-[#EBECEF] rounded-[24px] p-5">
+            <div className="bg-[#101D24] rounded-lg p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-base font-bold text-black">
+                <h3 className="text-base font-bold text-[#F5F7F5]">
                   {viewingDate} 详情
                 </h3>
                 <button
                   onClick={() => setViewingDate(null)}
-                  className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-[#D8E2ED] transition-colors"
+                  className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#1B3036] transition-colors"
                 >
-                  <X className="w-4 h-4 text-gray-500" />
+                  <X className="w-4 h-4 text-[#A9BDC4]" />
                 </button>
               </div>
               {viewDateCharsCreated.length > 0 && (
                 <div className="mb-2">
-                  <p className="text-xs font-bold text-gray-400 mb-1.5">当日录入</p>
+                  <p className="text-xs font-bold text-[#A9BDC4] mb-1.5">当日录入</p>
                   <div className="flex flex-wrap gap-2">
                     {viewDateCharsCreated.map(c => (
-                      <span key={c.id} className="px-3 py-1 bg-[#D8E2ED] rounded-full text-sm font-medium text-black">
+                      <span key={c.id} className="px-3 py-1 bg-[#1B3036] rounded-full text-sm font-medium text-[#F5F7F5]">
                         {c.char}
                       </span>
                     ))}
@@ -320,7 +322,7 @@ export default function ReviewCharsPage() {
               )}
               {viewDateCharsReviewed.length > 0 && (
                 <div>
-                  <p className="text-xs font-bold text-gray-400 mb-1.5">当日复习</p>
+                  <p className="text-xs font-bold text-[#A9BDC4] mb-1.5">当日复习</p>
                   <div className="flex flex-wrap gap-2">
                     {viewDateCharsReviewed.map(c => (
                       <span key={c.id} className="px-3 py-1 bg-green-100 rounded-full text-sm font-medium text-green-700">
@@ -331,7 +333,7 @@ export default function ReviewCharsPage() {
                 </div>
               )}
               {viewDateCharsCreated.length === 0 && viewDateCharsReviewed.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-2">当日无记录</p>
+                <p className="text-sm text-[#A9BDC4] text-center py-2">当日无记录</p>
               )}
             </div>
           </div>
@@ -340,10 +342,10 @@ export default function ReviewCharsPage() {
         {/* Today's Review List */}
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between mb-2 px-1">
-            <h3 className="text-base font-bold text-black">
+            <h3 className="text-base font-bold text-[#F5F7F5]">
               今日待复习
             </h3>
-            <span className="text-sm font-medium text-gray-400">
+            <span className="text-sm font-medium text-[#A9BDC4]">
               {todayReviewChars.length > 0
                 ? `${todayReviewChars.filter(c => todayReviewedIds.has(c.id)).length}/${todayReviewChars.length} 已完成`
                 : '暂无'
@@ -352,10 +354,10 @@ export default function ReviewCharsPage() {
           </div>
 
           {todayReviewChars.length === 0 ? (
-            <div className="bg-[#EBECEF] rounded-[24px] p-8 text-center">
-              <PencilLine className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-400 font-medium">今日没有需要复习的字</p>
-              <p className="text-xs text-gray-300 mt-1">点击下方按钮录入新的错别字</p>
+            <div className="bg-[#101D24] rounded-lg p-8 text-center">
+              <PencilLine className="w-10 h-10 text-[#C5D2D6] mx-auto mb-3" />
+              <p className="text-sm text-[#A9BDC4] font-medium">今日没有需要复习的字</p>
+              <p className="text-xs text-[#C5D2D6] mt-1">点击下方按钮录入新的错别字</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -367,22 +369,22 @@ export default function ReviewCharsPage() {
                 return (
                   <div
                     key={char.id}
-                    className={`flex items-center gap-4 p-4 rounded-[20px] transition-all duration-200
+                    className={`flex items-center gap-4 p-4 rounded-md transition-all duration-200
                       ${isReviewedToday
-                        ? 'bg-[#E8F5E9]'
-                        : 'bg-[#EBECEF] hover:bg-[#E5E7EB] cursor-pointer active:scale-[0.98]'
+                        ? 'bg-[#12332F]'
+                        : 'bg-[#101D24] hover:bg-[#16262E] cursor-pointer active:scale-[0.98]'
                       }
                     `}
                   >
                     {/* Character */}
-                    <div className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm">
-                      <span className="text-xl font-black text-[#0066EE]">{char.char}</span>
+                    <div className="w-12 h-12 flex items-center justify-center bg-[#1B3036] rounded-md shadow-sm">
+                      <span className="text-xl font-black text-[#F5D32F]">{char.char}</span>
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-black">
+                        <span className="text-sm font-bold text-[#F5F7F5]">
                           {char.char}
                         </span>
                         {char.mastered && (
@@ -392,14 +394,14 @@ export default function ReviewCharsPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-400">已复习 {progress}/{total}</span>
+                        <span className="text-xs text-[#A9BDC4]">已复习 {progress}/{total}</span>
                         {/* Mini progress bar */}
                         <div className="flex gap-0.5">
                           {Array.from({ length: total }).map((_, i) => (
                             <div
                               key={i}
                               className={`w-3 h-1.5 rounded-full transition-colors ${
-                                i < progress ? 'bg-[#0066EE]' : 'bg-gray-200'
+                                i < progress ? 'bg-[#F5D32F]' : 'bg-gray-200'
                               }`}
                             />
                           ))}
@@ -412,18 +414,18 @@ export default function ReviewCharsPage() {
                       {!isReviewedToday ? (
                         <button
                           onClick={(e) => { e.stopPropagation(); handleReview(char.id); }}
-                          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0066EE] text-white hover:bg-[#0055CC] transition-colors active:scale-95 shadow-md"
+                          className="w-11 h-11 flex items-center justify-center rounded-full bg-[#F5D32F] text-[#071117] hover:bg-[#D8BA22] transition-colors active:scale-95 shadow-md"
                         >
                           <Check className="w-5 h-5 stroke-[3]" />
                         </button>
                       ) : (
-                        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-green-500 text-white">
+                        <div className="w-11 h-11 flex items-center justify-center rounded-full bg-green-500 text-white">
                           <Check className="w-5 h-5 stroke-[3]" />
                         </div>
                       )}
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDeleteChar(char.id); }}
-                        className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"
+                        className="w-11 h-11 flex items-center justify-center rounded-full text-[#A9BDC4] hover:text-red-700 hover:bg-red-50 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -443,15 +445,15 @@ export default function ReviewCharsPage() {
           return (
             <div className="px-4 mb-3">
               <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="text-base font-bold text-black">待复习（未到期）</h3>
-                <span className="text-sm font-medium text-gray-400">{otherChars.length} 字</span>
+                <h3 className="text-base font-bold text-[#F5F7F5]">待复习（未到期）</h3>
+                <span className="text-sm font-medium text-[#A9BDC4]">{otherChars.length} 字</span>
               </div>
-              <div className="bg-[#EBECEF] rounded-[24px] p-4">
+              <div className="bg-[#101D24] rounded-lg p-4">
                 <div className="flex flex-wrap gap-2">
                   {otherChars.map(c => (
-                    <div key={c.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full">
-                      <span className="text-sm font-bold text-black">{c.char}</span>
-                      <span className="text-xs text-gray-400">{c.reviewCount}/{REVIEW_INTERVALS.length}</span>
+                    <div key={c.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1B3036] rounded-full">
+                      <span className="text-sm font-bold text-[#F5F7F5]">{c.char}</span>
+                      <span className="text-xs text-[#A9BDC4]">{c.reviewCount}/{REVIEW_INTERVALS.length}</span>
                     </div>
                   ))}
                 </div>
@@ -464,10 +466,10 @@ export default function ReviewCharsPage() {
         {masteredChars > 0 && (
           <div className="px-4 mb-3">
             <div className="flex items-center justify-between mb-2 px-1">
-              <h3 className="text-base font-bold text-black">已掌握 🎉</h3>
-              <span className="text-sm font-medium text-gray-400">{masteredChars} 字</span>
+              <h3 className="text-base font-bold text-[#F5F7F5]">已掌握 🎉</h3>
+              <span className="text-sm font-medium text-[#A9BDC4]">{masteredChars} 字</span>
             </div>
-            <div className="bg-[#EBECEF] rounded-[24px] p-4">
+            <div className="bg-[#101D24] rounded-lg p-4">
               <div className="flex flex-wrap gap-2">
                 {chars.filter(c => c.mastered).map(c => (
                   <div key={c.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FEF3C7] rounded-full">
@@ -484,7 +486,7 @@ export default function ReviewCharsPage() {
         <div className="px-4 mt-2">
           <button
             onClick={openAddModal}
-            className="w-full flex items-center justify-center gap-2 p-4 rounded-[20px] bg-[#0066EE] text-white font-bold text-base hover:bg-[#0055CC] transition-all active:scale-[0.98] shadow-lg"
+            className="w-full flex items-center justify-center gap-2 p-4 rounded-md bg-[#F5D32F] text-[#071117] font-bold text-base hover:bg-[#D8BA22] transition-all active:scale-[0.98] shadow-lg"
           >
             <Plus className="w-5 h-5 stroke-[3]" />
             <span>录入新的错别字</span>
@@ -504,10 +506,10 @@ export default function ReviewCharsPage() {
             onClick={() => setShowAddModal(false)}
           />
           {/* Modal Content */}
-          <div className="relative w-full max-w-md bg-white rounded-t-[28px] p-6 pb-8 animate-slide-up">
+          <div className="relative w-full max-w-[720px] bg-[#1B3036] rounded-t-[28px] p-6 pb-8 animate-slide-up">
             <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5" />
-            <h3 className="text-lg font-black text-black mb-1">录入错别字</h3>
-            <p className="text-sm text-gray-400 mb-4">
+            <h3 className="text-lg font-black text-[#F5F7F5] mb-1">录入错别字</h3>
+            <p className="text-sm text-[#A9BDC4] mb-4">
               选择日期并输入错别字，多个字用逗号或空格分隔
             </p>
             <div className="flex flex-col gap-3">
@@ -515,7 +517,7 @@ export default function ReviewCharsPage() {
                 type="date"
                 value={newCharDate}
                 onChange={e => setNewCharDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#F2F2F7] border-2 border-transparent focus:border-[#0066EE] outline-none text-base font-medium text-black transition-colors"
+                className="w-full px-4 py-3 rounded-md bg-[#16262E] border-2 border-transparent focus:border-[#F5D32F] outline-none text-base font-medium text-[#F5F7F5] transition-colors"
               />
               <input
                 type="text"
@@ -524,19 +526,19 @@ export default function ReviewCharsPage() {
                 onKeyDown={e => { if (e.key === 'Enter') handleAddChars(); }}
                 placeholder="例如：课，做，场"
                 autoFocus
-                className="w-full px-4 py-3 rounded-2xl bg-[#F2F2F7] border-2 border-transparent focus:border-[#0066EE] outline-none text-base font-medium text-black placeholder:text-gray-300 transition-colors"
+                className="w-full px-4 py-3 rounded-md bg-[#16262E] border-2 border-transparent focus:border-[#F5D32F] outline-none text-base font-medium text-[#F5F7F5] placeholder:text-[#C5D2D6] transition-colors"
               />
             </div>
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="flex-1 py-3 rounded-2xl bg-[#F2F2F7] text-gray-500 font-bold text-base hover:bg-[#E5E7EB] transition-colors active:scale-[0.98]"
+                className="flex-1 py-3 rounded-md bg-[#16262E] text-[#A9BDC4] font-bold text-base hover:bg-[#16262E] transition-colors active:scale-[0.98]"
               >
                 取消
               </button>
               <button
                 onClick={handleAddChars}
-                className="flex-1 py-3 rounded-2xl bg-[#0066EE] text-white font-bold text-base hover:bg-[#0055CC] transition-colors active:scale-[0.98] shadow-md"
+                className="flex-1 py-3 rounded-md bg-[#F5D32F] text-[#071117] font-bold text-base hover:bg-[#D8BA22] transition-colors active:scale-[0.98] shadow-md"
               >
                 确认录入
               </button>
@@ -547,3 +549,5 @@ export default function ReviewCharsPage() {
     </div>
   );
 }
+
+
