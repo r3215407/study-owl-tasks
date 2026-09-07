@@ -1,11 +1,5 @@
 # Asset Sources
 
-## shark-deep-sea.jpg
-
-- Origin: Unsplash image delivery service
-- Source URL: https://images.unsplash.com/photo-1560275619-4662e36fa65c
-- Project use: Home-page shark mission image
-
 ## shark-megalodon-stylized.png
 
 - Origin: Generated with the configured OpenAI-compatible API using `gpt-image-2`
